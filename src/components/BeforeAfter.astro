@@ -1,0 +1,340 @@
+---
+// Comparador antes/depois com divisória inclinada (mesmo ângulo da logo).
+// Navegador + celular compartilham a mesma posição (--p, de 0 a 100).
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+
+type Props = {
+  antesDesktop: ImageMetadata;
+  depoisDesktop: ImageMetadata;
+  antesCelular: ImageMetadata;
+  depoisCelular: ImageMetadata;
+  endereco: string;
+  nome: string;
+};
+const { antesDesktop, depoisDesktop, antesCelular, depoisCelular, endereco, nome } = Astro.props;
+---
+<div class="ba" data-ba style="--p: 110">
+  <div class="ba__browser" data-ba-frame style="--s: 6.6%; --ang: 11.9deg">
+    <div class="ba__bar" aria-hidden="true">
+      <i></i><i></i><i></i>
+      <span class="ba__url"><Icon name="lock" />{endereco}</span>
+    </div>
+    <div class="ba__view">
+      <Image class="ba__img" src={antesDesktop} alt={`Site antigo da ${nome} no computador`} widths={[720, 1080, 1440]} sizes="(min-width: 1100px) 1000px, 92vw" loading="eager" />
+      <div class="ba__depois"><Image class="ba__img" src={depoisDesktop} alt={`Site novo da ${nome} no computador`} widths={[720, 1080, 1440]} sizes="(min-width: 1100px) 1000px, 92vw" loading="eager" /></div>
+      <span class="ba__line" aria-hidden="true"><span class="ba__knob"><Icon name="chevron" /><Icon name="chevron" /></span></span>
+      <span class="ba__tag ba__tag--antes" aria-hidden="true">Antes</span>
+      <span class="ba__tag ba__tag--depois" aria-hidden="true">Depois</span>
+    </div>
+  </div>
+
+  <div class="ba__phone" data-ba-frame style="--s: 9%; --ang: 4.8deg">
+    <div class="ba__view">
+      <Image class="ba__img" src={antesCelular} alt={`Site antigo da ${nome} no celular`} widths={[300, 600, 780]} sizes="(min-width: 720px) 230px, 300px" loading="eager" />
+      <div class="ba__depois"><Image class="ba__img" src={depoisCelular} alt={`Site novo da ${nome} no celular`} widths={[300, 600, 780]} sizes="(min-width: 720px) 230px, 300px" loading="eager" /></div>
+      <span class="ba__line" aria-hidden="true"><span class="ba__knob"><Icon name="chevron" /><Icon name="chevron" /></span></span>
+      <span class="ba__tag ba__tag--antes" aria-hidden="true">Antes</span>
+      <span class="ba__tag ba__tag--depois" aria-hidden="true">Depois</span>
+    </div>
+  </div>
+
+  <label class="sr-only" for="ba-range">Comparar site antigo e site novo</label>
+  <input id="ba-range" class="ba__range" type="range" min="0" max="100" step="1" value="50" data-ba-range />
+  <p class="ba__hint" aria-hidden="true"><Icon name="chevron" /> Arraste para comparar</p>
+</div>
+
+<style>
+  .ba {
+    position: relative;
+    --frame: #1a2130;
+  }
+  .ba__browser {
+    position: relative;
+    border-radius: 16px;
+    background: var(--frame);
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 8%),
+      0 40px 120px -30px rgb(0 0 0 / 80%),
+      0 30px 80px -40px rgb(36 141 207 / 55%);
+    overflow: hidden;
+  }
+  .ba__bar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 38px;
+    padding: 0 14px;
+  }
+  .ba__bar i {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 16%);
+  }
+  .ba__url {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 auto;
+    padding: 5px 14px;
+    border-radius: 8px;
+    background: rgb(0 0 0 / 28%);
+    font-size: 12px;
+    color: var(--c-muted);
+  }
+  .ba__url :global(svg) {
+    width: 12px;
+    height: 12px;
+  }
+  .ba__view {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    cursor: ew-resize;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .ba__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    pointer-events: none;
+  }
+  .ba__depois {
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(calc(var(--p) * 1% + var(--s)) 0, 100% 0, 100% 100%, calc(var(--p) * 1% - var(--s)) 100%);
+  }
+  .ba__line {
+    position: absolute;
+    top: -10%;
+    bottom: -10%;
+    left: calc(var(--p) * 1%);
+    width: 3px;
+    margin-left: -1.5px;
+    background: var(--c-green);
+    box-shadow: 0 0 18px rgb(17 244 178 / 70%);
+    transform: rotate(var(--ang));
+    pointer-events: none;
+  }
+  .ba__knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 38px;
+    margin: -19px 0 0 -27px;
+    border-radius: 8px;
+    background: var(--c-green);
+    color: var(--c-green-ink);
+    transform: rotate(calc(var(--ang) * -1)) skewX(var(--slant));
+    box-shadow: 0 8px 24px -6px rgb(0 0 0 / 50%);
+    transition: transform 0.3s var(--ease-out);
+  }
+  .ba__knob :global(svg) {
+    width: 16px;
+    height: 16px;
+    transform: skewX(12deg);
+  }
+  .ba__knob :global(svg:first-child) {
+    transform: skewX(12deg) scaleX(-1);
+  }
+  .ba:has(.ba__range:focus-visible) .ba__knob {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+  }
+  .ba.is-dragging .ba__knob {
+    transform: rotate(calc(var(--ang) * -1)) skewX(var(--slant)) scale(1.08);
+  }
+  .ba__tag {
+    position: absolute;
+    top: 14px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font: 800 12px/1 var(--f-display);
+    font-style: italic;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: opacity 0.3s;
+  }
+  .ba__tag--antes {
+    left: 14px;
+    background: rgb(0 0 0 / 72%);
+    color: #fff;
+  }
+  .ba__tag--depois {
+    right: 14px;
+    background: var(--c-green);
+    color: var(--c-green-ink);
+  }
+  .ba.is-antes .ba__tag--depois,
+  .ba.is-depois .ba__tag--antes {
+    opacity: 0;
+  }
+
+  .ba__phone {
+    position: absolute;
+    right: -3%;
+    bottom: -12%;
+    width: 23%;
+    padding: 8px;
+    border-radius: 34px;
+    background: #0b0e14;
+    box-shadow:
+      0 0 0 1.5px rgb(255 255 255 / 14%),
+      0 30px 80px -20px rgb(0 0 0 / 85%);
+  }
+  .ba__phone .ba__view {
+    aspect-ratio: 390 / 844;
+    border-radius: 26px;
+  }
+  .ba__phone .ba__knob {
+    width: 40px;
+    height: 30px;
+    margin: -15px 0 0 -20px;
+  }
+  .ba__phone .ba__tag {
+    top: 12px;
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+  .ba__phone .ba__tag--antes {
+    left: 10px;
+  }
+  .ba__phone .ba__tag--depois {
+    right: 10px;
+  }
+
+  .ba__range {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ba__hint {
+    display: none;
+  }
+
+  @media (max-width: 720px) {
+    .ba__browser {
+      display: none;
+    }
+    .ba__phone {
+      position: relative;
+      inset: auto;
+      width: min(78vw, 320px);
+      margin-inline: auto;
+      padding: 9px;
+      border-radius: 40px;
+    }
+    .ba__phone .ba__view {
+      border-radius: 31px;
+    }
+    .ba__hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--c-muted);
+    }
+    .ba__hint :global(svg) {
+      width: 16px;
+      transform: scaleX(-1);
+    }
+  }
+</style>
+
+<script>
+  import { gsap, reduced } from '../scripts/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((ba) => {
+    const range = ba.querySelector<HTMLInputElement>('[data-ba-range]')!;
+    const estado = { p: 110 };
+    let intro: gsap.core.Tween | null = null;
+
+    const aplicar = () => {
+      ba.style.setProperty('--p', estado.p.toFixed(2));
+      ba.classList.toggle('is-antes', estado.p > 90);
+      ba.classList.toggle('is-depois', estado.p < 10);
+    };
+    const ir = (p: number) => {
+      intro?.kill();
+      estado.p = Math.max(2, Math.min(98, p));
+      range.value = String(Math.round(estado.p));
+      aplicar();
+    };
+
+    // Converte o ponteiro em posição, compensando a inclinação da linha.
+    const posicao = (frame: HTMLElement, e: PointerEvent) => {
+      const view = frame.querySelector<HTMLElement>('.ba__view')!;
+      const r = view.getBoundingClientRect();
+      const s = parseFloat(getComputedStyle(frame).getPropertyValue('--s'));
+      const fx = ((e.clientX - r.left) / r.width) * 100;
+      const fy = (e.clientY - r.top) / r.height;
+      return fx - s * (1 - 2 * fy);
+    };
+
+    ba.querySelectorAll<HTMLElement>('[data-ba-frame]').forEach((frame) => {
+      const view = frame.querySelector<HTMLElement>('.ba__view')!;
+      let ativo = false;
+      let inicioX = 0;
+      let inicioY = 0;
+      let decidido = false;
+      view.addEventListener('pointerdown', (e) => {
+        ativo = true;
+        decidido = e.pointerType === 'mouse';
+        inicioX = e.clientX;
+        inicioY = e.clientY;
+        if (decidido) {
+          view.setPointerCapture(e.pointerId);
+          ba.classList.add('is-dragging');
+          ir(posicao(frame, e));
+        }
+      });
+      view.addEventListener('pointermove', (e) => {
+        if (!ativo) return;
+        if (!decidido) {
+          // No toque, só assume o gesto se ele for mais horizontal que vertical.
+          const dx = Math.abs(e.clientX - inicioX);
+          const dy = Math.abs(e.clientY - inicioY);
+          if (dx < 6 && dy < 6) return;
+          if (dy > dx) return void (ativo = false);
+          decidido = true;
+          view.setPointerCapture(e.pointerId);
+          ba.classList.add('is-dragging');
+        }
+        ir(posicao(frame, e));
+      });
+      const fim = (e: PointerEvent) => {
+        if (ativo && !decidido && e.type === 'pointerup') ir(posicao(frame, e)); // toque rápido = pular para o ponto
+        ativo = false;
+        ba.classList.remove('is-dragging');
+      };
+      view.addEventListener('pointerup', fim);
+      view.addEventListener('pointercancel', fim);
+    });
+
+    range.addEventListener('input', () => ir(+range.value));
+
+    if (reduced) return ir(50);
+    aplicar();
+    // Entrada: o site novo "passa" por cima do antigo.
+    const io = new IntersectionObserver(([en]) => {
+      if (!en.isIntersecting) return;
+      io.disconnect();
+      intro = gsap.to(estado, { p: 46, duration: 1.9, delay: 0.5, ease: 'expo.inOut', onUpdate: aplicar, onComplete: () => (range.value = '46') });
+    }, { threshold: 0.35 });
+    io.observe(ba);
+  });
+</script>

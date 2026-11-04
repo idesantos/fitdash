@@ -1,0 +1,9 @@
+---
+import type { Demo } from '../../../data/demos/tipos';
+const { demo } = Astro.props as { demo: Demo };
+---
+<section class="d-sec d-num" id="numeros">
+  <div class="d-wrap d-num__grid d-grid">
+    {demo.numeros!.map((n) => <div data-r><strong data-count>{n.valor}</strong><span>{n.rotulo}</span></div>)}
+  </div>
+</section>

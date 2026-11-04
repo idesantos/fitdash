@@ -1,0 +1,23 @@
+---
+import { Image } from 'astro:assets';
+import type { Demo } from '../../../data/demos/tipos';
+const { demo } = Astro.props as { demo: Demo };
+const e = demo.equipe!;
+const iniciais = (n: string) => n.split(' ').map((p) => p[0]).slice(0, 2).join('');
+---
+<section class="d-sec d-eq" id="equipe">
+  <div class="d-wrap">
+    <div class="d-head">
+      {e.eyebrow && <p class="d-eyebrow" data-r>{e.eyebrow}</p>}
+      <h2 class="d-h2" data-r>{e.titulo}</h2>
+    </div>
+    <ul class="d-eq__grid d-grid">
+      {e.itens.map((p) => (
+        <li class="d-card d-eq__item" data-r>
+          <div class="d-eq__foto">{p.foto ? <Image src={p.foto} alt={p.nome} widths={[300, 600]} sizes="300px" /> : <span class="d-eq__ini" aria-hidden="true">{iniciais(p.nome)}</span>}</div>
+          <div class="d-eq__body"><h3 class="d-h3">{p.nome}</h3><p>{p.cargo}</p></div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

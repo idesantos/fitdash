@@ -1,0 +1,1440 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import ModeloThumb from '../components/ModeloThumb.astro';
+import { categorias, modelos, modelosDa } from '../data/modelos';
+import { conteudoPorCategoria, mudancasRenovacao, guiaFotos, dicasFotos } from '../data/formulario';
+import { servicos, upsell, black, blackAtiva, brl, prazoDias, parcelasMax, rodadasAjuste } from '../data/oferta';
+import { clausulas, versaoContrato } from '../data/contrato';
+
+const etapas = ['Serviço e modelo', 'Sua academia', 'Conteúdo', 'Logo e fotos', 'Turbinar', 'Contrato'];
+const ativa = blackAtiva();
+const endpoint = import.meta.env.PUBLIC_PEDIDO_ENDPOINT ?? '';
+const dados = {
+  fimBlack: black.fim,
+  servicos: Object.fromEntries(servicos.map((s) => [s.id, { nome: s.nome, preco: s.preco, precoBlack: s.precoBlack }])),
+  upsell: { nome: upsell.nome, preco: upsell.preco, precoBlack: upsell.precoBlack },
+  modelos: Object.fromEntries(modelos.map((m) => [m.slug, { nome: m.nome, categoria: m.categoria }])),
+  categorias: Object.fromEntries(categorias.map((c) => [c.id, c.curto])),
+  versaoContrato,
+  parcelasMax,
+};
+const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO'.split(' ');
+---
+<Base title="Começar meu site" description="Escolha o modelo, conte sobre a sua academia e receba o site pronto em até 10 dias. Você só paga depois." simples>
+  <section class="wz-top">
+    <div class="container">
+      <p class="eyebrow">Começar meu site</p>
+      <h1 class="h-lg">Vamos montar o site da sua academia.</h1>
+      <p class="lead">Leva uns 15 minutos. Nada é cobrado agora: você só paga depois de ver o site pronto.</p>
+    </div>
+  </section>
+
+  <section class:list={['wz paper', { 'is-black': ativa }]} data-wz>
+    <div class="container wz__in grid-safe">
+      <form class="wz__form" data-wizard data-endpoint={endpoint} novalidate>
+        <ol class="wz__prog" aria-label="Etapas">
+          {etapas.map((e, i) => <li data-prog={i}><span>{i + 1}</span><em>{e}</em></li>)}
+        </ol>
+
+        <!-- 1. Serviço e modelo -->
+        <fieldset class="wz__step" data-step="0">
+          <legend class="wz__legend">O que você precisa?</legend>
+          <div class="opts opts--2">
+            {servicos.map((s, i) => (
+              <label class="opt">
+                <input type="radio" name="servico" value={s.id} required checked={i === 1} />
+                <span class="opt__box">
+                  <span class="opt__t">{s.nome}</span>
+                  <span class="opt__d">{s.para}. {s.resumo}</span>
+                  <span class="opt__p"><span data-black-only><s>{brl(s.preco)}</s> {brl(s.precoBlack)}</span><span data-normal-only>{brl(s.preco)}</span></span>
+                </span>
+              </label>
+            ))}
+          </div>
+
+          <p class="wz__label">Qual é o seu negócio?</p>
+          <div class="pills" role="radiogroup">
+            {categorias.map((c, i) => (
+              <label class="pill"><input type="radio" name="categoria" value={c.id} required checked={i === 0} /><span>{c.curto}</span></label>
+            ))}
+          </div>
+
+          <p class="wz__label">Escolha o modelo</p>
+          {categorias.map((c, ci) => (
+            <div class="models grid-safe" data-cat-models={c.id} hidden={ci !== 0}>
+              {modelosDa(c.id).map((m, i) => (
+                <label class="model">
+                  <input type="radio" name="modelo" value={m.slug} required checked={ci === 0 && i === 0} />
+                  <span class="model__box">
+                    <ModeloThumb modelo={m} pequeno />
+                    <span class="model__t">{m.nome}{m.demo && <a href={m.demo} target="_blank" rel="noopener">ver ao vivo <Icon name="external" /></a>}</span>
+                    <span class="model__d">{m.ideia}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          ))}
+          <p class="wz__note">Pode trocar de modelo até a gente começar a produção.</p>
+        </fieldset>
+
+        <!-- 2. Sua academia -->
+        <fieldset class="wz__step" data-step="1" hidden>
+          <legend class="wz__legend">Sobre a sua academia</legend>
+          <div class="fields">
+            <label class="f f--2"><span>Nome da academia <b>*</b></span><input name="academia" required autocomplete="organization" /></label>
+            <label class="f"><span>Seu nome <b>*</b></span><input name="responsavel" required autocomplete="name" /></label>
+            <label class="f"><span>WhatsApp <b>*</b></span><input name="whatsapp" required inputmode="tel" autocomplete="tel" placeholder="(11) 90000-0000" data-mask="tel" /></label>
+            <label class="f"><span>E-mail <b>*</b></span><input name="email" type="email" required autocomplete="email" /></label>
+            <label class="f"><span>CPF ou CNPJ <b>*</b></span><input name="documento" required inputmode="numeric" data-mask="doc" /><small>Vai no contrato e na cobrança.</small></label>
+          </div>
+
+          <p class="wz__label" data-endereco-titulo>Endereço</p>
+          <div class="fields">
+            <label class="f"><span>CEP <b data-end-req>*</b></span><input name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" data-mask="cep" data-end /></label>
+            <label class="f f--2"><span>Rua <b data-end-req>*</b></span><input name="rua" autocomplete="address-line1" data-end /></label>
+            <label class="f"><span>Número <b data-end-req>*</b></span><input name="numero" data-end /></label>
+            <label class="f"><span>Complemento</span><input name="complemento" /></label>
+            <label class="f"><span>Bairro <b data-end-req>*</b></span><input name="bairro" data-end /></label>
+            <label class="f"><span>Cidade <b data-end-req>*</b></span><input name="cidade" autocomplete="address-level2" data-end /></label>
+            <label class="f"><span>UF <b data-end-req>*</b></span><select name="uf" data-end><option value=""></option>{ufs.map((u) => <option>{u}</option>)}</select></label>
+          </div>
+
+          <p class="wz__label">Funcionamento e redes</p>
+          <div class="fields">
+            <label class="f"><span>Segunda a sexta</span><input name="hora_semana" placeholder="06:00 às 22:00" /></label>
+            <label class="f"><span>Sábado</span><input name="hora_sabado" placeholder="08:00 às 14:00" /></label>
+            <label class="f"><span>Domingo e feriados</span><input name="hora_domingo" placeholder="Fechado" /></label>
+            <label class="f"><span>Instagram</span><input name="instagram" placeholder="@suaacademia" /></label>
+          </div>
+
+          <fieldset class="sub" data-servico="renovacao">
+            <label class="f f--full"><span>Link do site atual <b>*</b></span><input name="site_atual" type="url" required placeholder="https://www.suaacademia.com.br" /><small>A gente puxa textos, horários e modalidades de lá.</small></label>
+          </fieldset>
+
+          <p class="wz__label">Domínio</p>
+          <div class="pills">
+            <label class="pill"><input type="radio" name="tem_dominio" value="sim" required /><span>Já tenho domínio</span></label>
+            <label class="pill"><input type="radio" name="tem_dominio" value="nao" required /><span>Ainda não tenho</span></label>
+          </div>
+          <fieldset class="sub fields" data-dominio hidden disabled>
+            <label class="f"><span>Qual? <b>*</b></span><input name="dominio" required placeholder="suaacademia.com.br" /></label>
+            <label class="f"><span>Quem tem acesso a ele? <b>*</b></span>
+              <select name="acesso_dominio" required>
+                <option value=""></option>
+                <option>Eu tenho a senha</option>
+                <option>Uma agência ou ex-fornecedor</option>
+                <option>Não sei</option>
+              </select>
+            </label>
+          </fieldset>
+        </fieldset>
+
+        <!-- 3. Conteúdo -->
+        <fieldset class="wz__step" data-step="2" hidden>
+          <legend class="wz__legend">O que vai no site</legend>
+
+          <fieldset class="sub" data-servico="renovacao">
+            <p class="wz__info"><Icon name="sparkle" /> Na renovação a gente aproveita o conteúdo do seu site atual. Aqui você só conta o que mudou.</p>
+            <p class="wz__label">O que está desatualizado?</p>
+            <div class="pills">
+              {mudancasRenovacao.map((m) => <label class="pill pill--check"><input type="checkbox" name="mudancas" value={m} /><span>{m}</span></label>)}
+            </div>
+            <label class="f f--full"><span>Conte o que mudou ou o que você quer diferente</span><textarea name="o_que_mudar" rows="4"></textarea></label>
+          </fieldset>
+
+          <fieldset class="sub" data-servico="criacao">
+            {categorias.map((c) => {
+              const cc = conteudoPorCategoria[c.id];
+              return (
+                <fieldset class="sub" data-cat={c.id}>
+                  <p class="wz__label">{cc.rotuloModalidades}</p>
+                  <div class="pills">
+                    {cc.modalidades.map((m) => <label class="pill pill--check"><input type="checkbox" name="modalidades" value={m} /><span>{m}</span></label>)}
+                  </div>
+                  <label class="f f--full"><span>Outras</span><input name="modalidades_outras" placeholder="Separe por vírgula" /></label>
+
+                  <p class="wz__label">Diferenciais</p>
+                  <div class="pills">
+                    {cc.diferenciais.map((m) => <label class="pill pill--check"><input type="checkbox" name="diferenciais" value={m} /><span>{m}</span></label>)}
+                  </div>
+
+                  <div class="fields">
+                    {cc.extras.map((x) => (
+                      <label class:list={['f', x.tipo === 'texto' ? '' : 'f--full']}>
+                        <span>{x.label}{x.obrigatorio && <b> *</b>}</span>
+                        {x.tipo === 'textarea' && <textarea name={`extra_${x.id}`} rows="3" placeholder={x.placeholder} required={x.obrigatorio} />}
+                        {x.tipo === 'texto' && <input name={`extra_${x.id}`} placeholder={x.placeholder} required={x.obrigatorio} />}
+                        {x.tipo === 'arquivo' && <input type="file" name={`extra_${x.id}`} accept="image/*,.pdf,.xls,.xlsx,.csv" multiple data-file />}
+                        {x.ajuda && <small>{x.ajuda}</small>}
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              );
+            })}
+
+            <p class="wz__label">Planos e preços</p>
+            <div class="pills">
+              <label class="pill"><input type="radio" name="mostrar_precos" value="sim" /><span>Mostrar preços no site</span></label>
+              <label class="pill"><input type="radio" name="mostrar_precos" value="nao" checked /><span>Só "consulte no WhatsApp"</span></label>
+            </div>
+            <label class="f f--full"><span>Seus planos</span><textarea name="planos" rows="3" placeholder="Ex.: Mensal R$ 129 · Trimestral R$ 339 · Anual R$ 1.188"></textarea></label>
+
+            <p class="wz__label">Depoimentos</p>
+            <label class="pill pill--check pill--block"><input type="checkbox" name="usar_google" value="sim" checked /><span>Podem usar as avaliações do meu perfil no Google</span></label>
+            <label class="f f--full"><span>Ou cole aqui depoimentos de alunos</span><textarea name="depoimentos" rows="3"></textarea></label>
+
+            <label class="f f--full"><span>O que só a sua academia tem?</span><textarea name="unico" rows="3" placeholder="O que os alunos mais elogiam, a história da academia, uma conquista..."></textarea></label>
+          </fieldset>
+        </fieldset>
+
+        <!-- 4. Logo e fotos -->
+        <fieldset class="wz__step" data-step="3" hidden>
+          <legend class="wz__legend">Logo e fotos</legend>
+          <div class="fields">
+            <label class="f f--full drop">
+              <span>Logo <b data-logo-req>*</b></span>
+              <input type="file" name="logo" accept="image/*,.svg,.pdf,.ai,.eps" data-file data-logo />
+              <small data-logo-help>De preferência em PNG com fundo transparente, SVG ou PDF.</small>
+            </label>
+          </div>
+
+          <p class="wz__label">Fotos</p>
+          <div class="pills">
+            <label class="pill"><input type="radio" name="fotos_quando" value="agora" checked /><span>Envio agora</span></label>
+            <label class="pill"><input type="radio" name="fotos_quando" value="depois" /><span>Envio depois</span></label>
+          </div>
+          <p class="wz__note" data-fotos-depois hidden>Sem problema. O prazo de {prazoDias} dias começa a contar quando as fotos chegarem.</p>
+
+          <div class="photos grid-safe" data-fotos-agora>
+            <label class="f drop drop--big">
+              <span class="drop__ic"><Icon name="upload" /></span>
+              <span><strong>Escolha as fotos</strong> (8 ou mais é o ideal)</span>
+              <input type="file" name="fotos" accept="image/*" multiple data-file data-fotos />
+              <small data-fotos-count>Nenhuma foto escolhida.</small>
+            </label>
+            <div class="photos__guide">
+              <p class="photos__gt"><Icon name="image" /> O que fotografar</p>
+              <ul>{guiaFotos.map((g) => <li>{g}</li>)}</ul>
+              <p class="photos__tips">{dicasFotos.join(' · ')}</p>
+            </div>
+          </div>
+          <div class="previews" data-previews></div>
+
+          <label class="f f--full"><span>Vídeo curto da academia (opcional)</span><input type="file" name="video" accept="video/*" data-file /><small>10 a 20 segundos, na horizontal. Pode virar o fundo da primeira tela.</small></label>
+        </fieldset>
+
+        <!-- 5. Turbinar -->
+        <fieldset class="wz__step" data-step="4" hidden>
+          <legend class="wz__legend">Quer aparecer mais no Google e nas IAs?</legend>
+          <label class="up-opt">
+            <input type="checkbox" name="google_ia" value="sim" />
+            <span class="up-opt__box">
+              <span class="up-opt__head">
+                <span class="up-opt__check" aria-hidden="true"><Icon name="check" /></span>
+                <span>
+                  <span class="up-opt__t">Adicionar {upsell.nome}</span>
+                  <span class="up-opt__d">{upsell.chamada}.</span>
+                </span>
+                <span class="up-opt__p"><span data-black-only><s>{brl(upsell.preco)}</s> +{brl(upsell.precoBlack)}</span><span data-normal-only>+{brl(upsell.preco)}</span></span>
+              </span>
+              <ul>{upsell.itens.map((i) => <li><Icon name="check" /> {i}</li>)}</ul>
+              <span class="up-opt__aviso">{upsell.aviso}</span>
+            </span>
+          </label>
+          <fieldset class="sub fields" data-gbp hidden disabled>
+            <label class="f f--full"><span>Link do seu perfil no Google (se tiver)</span><input name="perfil_google" type="url" placeholder="https://maps.app.goo.gl/..." /><small>Depois a gente te pede para nos adicionar como administrador do perfil.</small></label>
+          </fieldset>
+        </fieldset>
+
+        <!-- 6. Contrato -->
+        <fieldset class="wz__step" data-step="5" hidden>
+          <legend class="wz__legend">Revise e assine</legend>
+          <dl class="review" data-review></dl>
+
+          <ul class="terms">
+            <li><Icon name="shield" /> Nada é cobrado agora.</li>
+            <li><Icon name="clock" /> Entrega em até {prazoDias} dias depois do material completo.</li>
+            <li><Icon name="check" /> Na entrega, você recebe o link do site pronto e a cobrança, que vence no dia seguinte: Pix, boleto ou até {parcelasMax}x no cartão.</li>
+            <li><Icon name="edit" /> Depois do pagamento: site no seu domínio e {rodadasAjuste} rodadas de ajustes.</li>
+          </ul>
+
+          <details class="contract">
+            <summary>Ler o contrato completo</summary>
+            <div class="contract__body">
+              {clausulas.map((c, i) => (
+                <section>
+                  <h3>{i + 1}. {c.titulo}</h3>
+                  <ol>{c.itens.map((t) => <li>{t}</li>)}</ol>
+                </section>
+              ))}
+            </div>
+          </details>
+
+          <label class="pill pill--check pill--block accept"><input type="checkbox" name="aceite" value={versaoContrato} required /><span>Li e aceito o contrato.</span></label>
+          <label class="f f--full"><span>Assinatura: digite seu nome completo <b>*</b></span><input name="assinatura" required minlength="5" autocomplete="name" /></label>
+          <p class="wz__note">O aceite fica registrado com data, hora e IP, e você recebe uma cópia do contrato.</p>
+        </fieldset>
+
+        <div class="wz__nav">
+          <button type="button" class="btn btn--outline" data-prev hidden><span>Voltar</span></button>
+          <button type="button" class="btn btn--ink" data-next><span>Continuar <Icon name="arrow" /></span></button>
+          <button type="submit" class="btn btn--green" data-submit hidden><span>Assinar e enviar pedido <Icon name="arrow" /></span></button>
+        </div>
+        <p class="wz__err" data-err role="alert" hidden></p>
+      </form>
+
+      <aside class="wz__aside" aria-label="Resumo do pedido">
+        <div class="sum" data-sum>
+          <p class="sum__t">Seu pedido</p>
+          <dl>
+            <div><dt data-sum-servico>—</dt><dd data-sum-servico-p>—</dd></div>
+            <div><dt>Modelo</dt><dd data-sum-modelo>—</dd></div>
+            <div data-sum-up hidden><dt>{upsell.nome}</dt><dd data-sum-up-p>—</dd></div>
+          </dl>
+          <div class="sum__hoje"><span>Hoje você paga</span><strong>R$ 0</strong></div>
+          <div class="sum__total"><span>Na entrega</span><strong data-sum-total>—</strong></div>
+          <p class="sum__parc">à vista no Pix, ou em até {parcelasMax}x no cartão</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="done paper" data-done hidden>
+    <div class="container done__in">
+      <span class="done__ic"><Icon name="check" /></span>
+      <h2 class="h-lg">Pedido recebido!</h2>
+      <p class="lead">O prazo de até {prazoDias} dias começa quando o material estiver completo. Você vai receber a confirmação e a cópia do contrato no WhatsApp e no e-mail.</p>
+      <div class="done__test" data-done-test hidden>
+        <p><strong>Modo de teste:</strong> o envio ainda não está ligado, então nada saiu daqui. É isto que a gente receberia:</p>
+        <pre data-done-json></pre>
+      </div>
+    </div>
+  </section>
+
+  <script type="application/json" data-wz-json set:html={JSON.stringify(dados)} />
+</Base>
+
+<script>
+  import { reduced } from '../scripts/motion';
+
+  const form = document.querySelector<HTMLFormElement>('[data-wizard]')!;
+  const D = JSON.parse(document.querySelector('[data-wz-json]')!.textContent!);
+  const passos = [...form.querySelectorAll<HTMLFieldSetElement>('[data-step]')];
+  const prog = [...form.querySelectorAll<HTMLElement>('[data-prog]')];
+  const btnPrev = form.querySelector<HTMLButtonElement>('[data-prev]')!;
+  const btnNext = form.querySelector<HTMLButtonElement>('[data-next]')!;
+  const btnSubmit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+  const erro = form.querySelector<HTMLElement>('[data-err]')!;
+  const RASCUNHO = 'fitdash:pedido';
+  const blackAtiva = () => Date.now() <= new Date(D.fimBlack).getTime();
+  const brl = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  const preco = (p: { preco: number; precoBlack: number }) => (blackAtiva() ? p.precoBlack : p.preco);
+  const val = (n: string) => (form.elements.namedItem(n) as RadioNodeList | HTMLInputElement | null)?.value ?? '';
+  const marcado = (n: string) => form.querySelector<HTMLInputElement>(`[name="${n}"]:checked`)?.value ?? '';
+  let atual = 0;
+
+  // ---------- Documento, telefone e CEP ----------
+  const digitos = (s: string) => s.replace(/\D/g, '');
+  const cpfOk = (c: string) => {
+    if (c.length !== 11 || /^(\d)\1+$/.test(c)) return false;
+    const dv = (n: number) => {
+      let s = 0;
+      for (let i = 0; i < n; i++) s += +c[i] * (n + 1 - i);
+      return ((s * 10) % 11) % 10;
+    };
+    return dv(9) === +c[9] && dv(10) === +c[10];
+  };
+  const cnpjOk = (c: string) => {
+    if (c.length !== 14 || /^(\d)\1+$/.test(c)) return false;
+    const dv = (n: number) => {
+      const pesos = n === 12 ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2] : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+      const s = pesos.reduce((a, p, i) => a + +c[i] * p, 0) % 11;
+      return s < 2 ? 0 : 11 - s;
+    };
+    return dv(12) === +c[12] && dv(13) === +c[13];
+  };
+  const mascaras: Record<string, (v: string) => string> = {
+    tel: (v) => {
+      const d = digitos(v).slice(0, 11);
+      if (d.length <= 2) return d.length ? `(${d}` : '';
+      if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+      if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+      return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+    },
+    doc: (v) => {
+      const d = digitos(v).slice(0, 14);
+      if (d.length <= 11) return d.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      return d.replace(/(\d{2})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1/$2').replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+    },
+    cep: (v) => digitos(v).slice(0, 8).replace(/(\d{5})(\d)/, '$1-$2'),
+  };
+  form.querySelectorAll<HTMLInputElement>('[data-mask]').forEach((el) => {
+    el.addEventListener('input', () => {
+      el.value = mascaras[el.dataset.mask!](el.value);
+      el.setCustomValidity('');
+    });
+  });
+  const validarExtras = () => {
+    const doc = form.elements.namedItem('documento') as HTMLInputElement;
+    const d = digitos(doc.value);
+    doc.setCustomValidity(cpfOk(d) || cnpjOk(d) ? '' : 'Confira o CPF ou CNPJ.');
+    const tel = form.elements.namedItem('whatsapp') as HTMLInputElement;
+    tel.setCustomValidity(digitos(tel.value).length >= 10 ? '' : 'Confira o número com DDD.');
+    const fotos = form.querySelector<HTMLInputElement>('[data-fotos]')!;
+    fotos.setCustomValidity(marcado('fotos_quando') === 'agora' && !fotos.files?.length && !fotos.disabled ? 'Escolha as fotos ou marque "Envio depois".' : '');
+  };
+  const cep = form.elements.namedItem('cep') as HTMLInputElement;
+  cep.addEventListener('input', async () => {
+    const d = digitos(cep.value);
+    if (d.length !== 8) return;
+    try {
+      const r = await fetch(`https://viacep.com.br/ws/${d}/json/`).then((x) => x.json());
+      if (r.erro) return;
+      const preencher = (n: string, v: string) => {
+        const el = form.elements.namedItem(n) as HTMLInputElement;
+        if (el && !el.value) el.value = v;
+      };
+      preencher('rua', r.logradouro);
+      preencher('bairro', r.bairro);
+      preencher('cidade', r.localidade);
+      preencher('uf', r.uf);
+      (form.elements.namedItem('numero') as HTMLInputElement).focus();
+      salvar();
+    } catch {
+      /* sem internet ou ViaCEP fora: preenche à mão */
+    }
+  });
+
+  // ---------- Partes que dependem das escolhas ----------
+  const alternar = (sel: string, on: boolean) =>
+    form.querySelectorAll<HTMLFieldSetElement>(sel).forEach((f) => {
+      f.hidden = !on;
+      f.disabled = !on;
+    });
+  const sincronizar = () => {
+    const servico = marcado('servico');
+    const cat = marcado('categoria');
+    const renov = servico === 'renovacao';
+
+    form.querySelectorAll<HTMLElement>('[data-cat-models]').forEach((g) => (g.hidden = g.dataset.catModels !== cat));
+    const modelo = marcado('modelo');
+    if (!modelo || D.modelos[modelo]?.categoria !== cat) {
+      const primeiro = form.querySelector<HTMLInputElement>(`[data-cat-models="${cat}"] input`);
+      if (primeiro) primeiro.checked = true;
+    }
+    form.querySelectorAll<HTMLFieldSetElement>('[data-servico]').forEach((f) => {
+      const on = f.dataset.servico === servico;
+      f.hidden = !on;
+      f.disabled = !on;
+    });
+    form.querySelectorAll<HTMLFieldSetElement>('[data-cat]').forEach((f) => {
+      const on = !renov && f.dataset.cat === cat;
+      f.hidden = !on;
+      f.disabled = !on;
+    });
+    alternar('[data-dominio]', marcado('tem_dominio') === 'sim');
+    alternar('[data-gbp]', !!form.querySelector<HTMLInputElement>('[name="google_ia"]:checked'));
+
+    // Personal pode não ter endereço fixo.
+    const pedeEndereco = cat !== 'personal';
+    form.querySelectorAll<HTMLInputElement>('[data-end]').forEach((el) => (el.required = pedeEndereco));
+    form.querySelectorAll<HTMLElement>('[data-end-req]').forEach((el) => (el.hidden = !pedeEndereco));
+    form.querySelector<HTMLElement>('[data-endereco-titulo]')!.textContent = pedeEndereco ? 'Endereço' : 'Endereço (se atende em local fixo)';
+
+    // Na renovação, a logo pode vir do site atual.
+    const logo = form.querySelector<HTMLInputElement>('[data-logo]')!;
+    logo.required = !renov;
+    form.querySelector<HTMLElement>('[data-logo-req]')!.hidden = renov;
+    form.querySelector<HTMLElement>('[data-logo-help]')!.textContent = renov
+      ? 'Opcional: se não mandar, usamos a do site atual. PNG com fundo transparente, SVG ou PDF.'
+      : 'De preferência em PNG com fundo transparente, SVG ou PDF.';
+
+    const depois = marcado('fotos_quando') === 'depois';
+    form.querySelector<HTMLElement>('[data-fotos-agora]')!.hidden = depois;
+    form.querySelector<HTMLInputElement>('[data-fotos]')!.disabled = depois;
+    form.querySelector<HTMLElement>('[data-fotos-depois]')!.hidden = !depois;
+
+    resumo();
+  };
+
+  // ---------- Resumo e total ----------
+  const total = () => {
+    const s = D.servicos[marcado('servico')];
+    const up = form.querySelector<HTMLInputElement>('[name="google_ia"]:checked') ? preco(D.upsell) : 0;
+    return (s ? preco(s) : 0) + up;
+  };
+  const resumo = () => {
+    const s = D.servicos[marcado('servico')];
+    const m = D.modelos[marcado('modelo')];
+    const up = !!form.querySelector<HTMLInputElement>('[name="google_ia"]:checked');
+    const q = (sel: string) => document.querySelector<HTMLElement>(sel)!;
+    q('[data-sum-servico]').textContent = s ? s.nome : '—';
+    q('[data-sum-servico-p]').textContent = s ? brl(preco(s)) : '—';
+    q('[data-sum-modelo]').textContent = m ? `${m.nome} · ${D.categorias[m.categoria]}` : '—';
+    q('[data-sum-up]').hidden = !up;
+    q('[data-sum-up-p]').textContent = `+${brl(preco(D.upsell))}`;
+    q('[data-sum-total]').textContent = brl(total());
+  };
+
+  const montarRevisao = () => {
+    const s = D.servicos[marcado('servico')];
+    const m = D.modelos[marcado('modelo')];
+    const linhas: [string, string][] = [
+      ['Serviço', s?.nome ?? ''],
+      ['Modelo', m ? `${m.nome} (${D.categorias[m.categoria]})` : ''],
+      ['Academia', val('academia')],
+      ['Responsável', val('responsavel')],
+      ['WhatsApp', val('whatsapp')],
+      ['E-mail', val('email')],
+      ['CPF/CNPJ', val('documento')],
+    ];
+    if (marcado('servico') === 'renovacao') linhas.push(['Site atual', val('site_atual')]);
+    linhas.push(['Google e IA', form.querySelector('[name="google_ia"]:checked') ? 'Sim' : 'Não']);
+    linhas.push(['Total na entrega', `${brl(total())} (à vista ou até ${D.parcelasMax}x)`]);
+    const box = form.querySelector<HTMLElement>('[data-review]')!;
+    box.replaceChildren(
+      ...linhas.map(([k, v]) => {
+        const row = document.createElement('div');
+        const dt = document.createElement('dt');
+        const dd = document.createElement('dd');
+        dt.textContent = k;
+        dd.textContent = v || '—';
+        row.append(dt, dd);
+        return row;
+      }),
+    );
+  };
+
+  // ---------- Etapas ----------
+  const mostrar = (i: number) => {
+    atual = i;
+    passos.forEach((p, j) => (p.hidden = j !== i));
+    prog.forEach((p, j) => {
+      p.classList.toggle('is-done', j < i);
+      p.classList.toggle('is-on', j === i);
+      if (j === i) p.setAttribute('aria-current', 'step');
+      else p.removeAttribute('aria-current');
+    });
+    btnPrev.hidden = i === 0;
+    btnNext.hidden = i === passos.length - 1;
+    btnSubmit.hidden = i !== passos.length - 1;
+    erro.hidden = true;
+    if (i === passos.length - 1) montarRevisao();
+    const topo = form.getBoundingClientRect().top + scrollY - 90;
+    const lenis = (window as any).__lenis;
+    if (scrollY > topo) lenis ? lenis.scrollTo(topo, { duration: reduced ? 0 : 0.8 }) : scrollTo({ top: topo });
+  };
+  const etapaValida = (i: number) => {
+    validarExtras();
+    const campos = [...passos[i].querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea')].filter((el) => !el.disabled && !el.closest('[hidden]'));
+    const ruim = campos.find((el) => !el.checkValidity());
+    if (!ruim) return true;
+    ruim.reportValidity();
+    ruim.focus({ preventScroll: false });
+    return false;
+  };
+  btnNext.addEventListener('click', () => etapaValida(atual) && mostrar(atual + 1));
+  btnPrev.addEventListener('click', () => mostrar(atual - 1));
+  prog.forEach((p, j) =>
+    p.addEventListener('click', () => {
+      if (j < atual) mostrar(j);
+    }),
+  );
+
+  // ---------- Fotos: prévia e contagem ----------
+  const fotos = form.querySelector<HTMLInputElement>('[data-fotos]')!;
+  const previews = form.querySelector<HTMLElement>('[data-previews]')!;
+  fotos.addEventListener('change', () => {
+    const lista = [...(fotos.files ?? [])];
+    form.querySelector<HTMLElement>('[data-fotos-count]')!.textContent = lista.length
+      ? `${lista.length} foto${lista.length > 1 ? 's' : ''} escolhida${lista.length > 1 ? 's' : ''}${lista.length < 8 ? '. Mais fotos deixam o site melhor.' : '.'}`
+      : 'Nenhuma foto escolhida.';
+    previews.replaceChildren(
+      ...lista.slice(0, 24).map((f) => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(f);
+        img.alt = '';
+        img.onload = () => URL.revokeObjectURL(img.src);
+        return img;
+      }),
+    );
+    fotos.setCustomValidity('');
+  });
+
+  // ---------- Rascunho no navegador (sem arquivos e sem assinatura) ----------
+  const NAO_SALVAR = new Set(['aceite', 'assinatura']);
+  const salvar = () => {
+    const obj: Record<string, string[]> = {};
+    for (const el of form.querySelectorAll<HTMLInputElement>('input, select, textarea')) {
+      if (!el.name || el.type === 'file' || NAO_SALVAR.has(el.name)) continue;
+      if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) continue;
+      (obj[el.name] ||= []).push(el.value);
+    }
+    try {
+      localStorage.setItem(RASCUNHO, JSON.stringify(obj));
+    } catch {}
+  };
+  const restaurar = () => {
+    let obj: Record<string, string[]> | null = null;
+    try {
+      obj = JSON.parse(localStorage.getItem(RASCUNHO) ?? 'null');
+    } catch {}
+    if (!obj) return;
+    for (const el of form.querySelectorAll<HTMLInputElement>('input, select, textarea')) {
+      if (!el.name || el.type === 'file' || NAO_SALVAR.has(el.name)) continue;
+      const vals = obj[el.name] ?? [];
+      if (el.type === 'radio' || el.type === 'checkbox') el.checked = vals.includes(el.value);
+      else if (vals.length) el.value = vals[0];
+    }
+  };
+  restaurar();
+  const params = new URLSearchParams(location.search);
+  const modeloUrl = params.get('modelo');
+  if (modeloUrl && D.modelos[modeloUrl]) {
+    form.querySelector<HTMLInputElement>(`[name="categoria"][value="${D.modelos[modeloUrl].categoria}"]`)!.checked = true;
+    form.querySelector<HTMLInputElement>(`[name="modelo"][value="${modeloUrl}"]`)!.checked = true;
+  }
+  const servicoUrl = params.get('servico');
+  if (servicoUrl && D.servicos[servicoUrl]) form.querySelector<HTMLInputElement>(`[name="servico"][value="${servicoUrl}"]`)!.checked = true;
+
+  form.addEventListener('change', () => {
+    sincronizar();
+    salvar();
+  });
+  form.addEventListener('input', () => salvar());
+  document.querySelector('[data-wz]')!.classList.toggle('is-black', blackAtiva());
+  sincronizar();
+  mostrar(0);
+
+  // ---------- Envio ----------
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!etapaValida(atual)) return;
+    const fd = new FormData(form);
+    const pedido: Record<string, unknown> = {};
+    for (const [k, v] of fd.entries()) {
+      const valor = v instanceof File ? (v.name ? `${v.name} (${Math.round(v.size / 1024)} KB)` : null) : v;
+      if (valor === null) continue;
+      if (k in pedido) pedido[k] = ([] as unknown[]).concat(pedido[k], valor);
+      else pedido[k] = valor;
+    }
+    pedido.total = total();
+    pedido.black = blackAtiva();
+    pedido.contrato = { versao: D.versaoContrato, aceitoEm: new Date().toISOString(), navegador: navigator.userAgent };
+
+    const endpoint = form.dataset.endpoint;
+    btnSubmit.disabled = true;
+    try {
+      if (endpoint) {
+        fd.append('pedido', JSON.stringify(pedido));
+        const r = await fetch(endpoint, { method: 'POST', body: fd });
+        if (!r.ok) throw new Error(String(r.status));
+      } else {
+        document.querySelector<HTMLElement>('[data-done-test]')!.hidden = false;
+        document.querySelector<HTMLElement>('[data-done-json]')!.textContent = JSON.stringify(pedido, null, 2);
+      }
+      (window as any).dataLayer?.push({ event: 'pedido_enviado', servico: pedido.servico, modelo: pedido.modelo, valor: pedido.total });
+      localStorage.removeItem(RASCUNHO);
+      document.querySelector<HTMLElement>('.wz')!.hidden = true;
+      document.querySelector<HTMLElement>('.wz-top')!.hidden = true;
+      document.querySelector<HTMLElement>('[data-done]')!.hidden = false;
+      scrollTo({ top: 0 });
+    } catch {
+      erro.hidden = false;
+      erro.textContent = 'Não conseguimos enviar agora. Confira sua internet e tente de novo.';
+    } finally {
+      btnSubmit.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .wz-top {
+    padding: calc(var(--header-h) + clamp(28px, 5vw, 64px)) 0 clamp(36px, 5vw, 64px);
+    background:
+      radial-gradient(50% 120% at 90% 0%, rgb(36 141 207 / 28%), transparent 70%),
+      var(--c-bg);
+  }
+  .wz-top h1 {
+    max-width: 18ch;
+    margin: 14px 0 16px;
+  }
+  .wz {
+    padding: clamp(28px, 4vw, 56px) 0 var(--section-y);
+  }
+  .wz__in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: clamp(24px, 4vw, 56px);
+    align-items: start;
+  }
+  .wz__form {
+    padding: clamp(20px, 3vw, 40px);
+    border-radius: var(--r-lg);
+    background: #fff;
+    box-shadow:
+      0 1px 2px rgb(11 15 23 / 6%),
+      0 24px 60px -40px rgb(11 15 23 / 40%);
+  }
+
+  .wz:not(.is-black) [data-black-only],
+  .wz.is-black [data-normal-only] {
+    display: none;
+  }
+
+  /* Progresso */
+  .wz__prog {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    margin-bottom: clamp(24px, 3vw, 36px);
+    counter-reset: none;
+  }
+  .wz__prog li {
+    display: grid;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--c-ink-muted);
+  }
+  .wz__prog li::before {
+    content: '';
+    height: 4px;
+    border-radius: 4px;
+    background: var(--c-ink-line);
+    transition: background 0.3s;
+  }
+  .wz__prog li.is-done::before {
+    background: var(--c-blue);
+  }
+  .wz__prog li.is-on::before {
+    background: var(--c-ink);
+  }
+  .wz__prog li.is-done {
+    cursor: pointer;
+  }
+  .wz__prog span {
+    display: none;
+  }
+  .wz__prog em {
+    font-style: normal;
+    font-weight: 600;
+  }
+  .wz__prog li.is-on {
+    color: var(--c-ink);
+  }
+
+  fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .wz__legend {
+    padding: 0;
+    margin-bottom: 22px;
+    font: 800 clamp(26px, 2.6vw, 34px) / 1.05 var(--f-display);
+    font-style: italic;
+    font-stretch: 110%;
+    letter-spacing: -0.02em;
+  }
+  .wz__label {
+    margin: 28px 0 12px;
+    font: 800 18px/1.2 var(--f-display);
+    font-style: italic;
+  }
+  .wz__note {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--c-ink-muted);
+  }
+  .wz__info {
+    display: flex;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #e8f3fb;
+    color: #0b3a5c;
+    font-size: 15px;
+  }
+  .wz__info :global(svg) {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    color: var(--c-blue);
+  }
+  .sub {
+    display: block;
+  }
+  .sub[hidden] {
+    display: none;
+  }
+
+  /* Opções grandes (serviço) */
+  .opts {
+    display: grid;
+    gap: 12px;
+  }
+  .opts--2 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .opt input,
+  .model input,
+  .pill input,
+  .up-opt input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .opt__box {
+    display: grid;
+    gap: 6px;
+    height: 100%;
+    padding: 18px 20px;
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1.5px var(--c-ink-line);
+    cursor: pointer;
+    transition: box-shadow 0.2s, background 0.2s;
+  }
+  .opt__t {
+    font: 800 22px/1 var(--f-display);
+    font-style: italic;
+  }
+  .opt__d {
+    font-size: 14.5px;
+    color: var(--c-ink-muted);
+  }
+  .opt__p {
+    margin-top: 4px;
+    font: 800 20px/1 var(--f-display);
+  }
+  .opt__p s,
+  .up-opt__p s {
+    font-size: 0.7em;
+    font-weight: 500;
+    color: var(--c-ink-muted);
+  }
+  .opt input:checked + .opt__box {
+    background: #f1f8fd;
+    box-shadow: inset 0 0 0 2.5px var(--c-blue);
+  }
+  .opt input:focus-visible + .opt__box,
+  .model input:focus-visible + .model__box,
+  .pill input:focus-visible + span,
+  .up-opt input:focus-visible + .up-opt__box {
+    outline: 3px solid var(--c-green);
+    outline-offset: 2px;
+  }
+
+  /* Pílulas */
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pill {
+    position: relative;
+  }
+  .pill > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1.5px var(--c-ink-line);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+  }
+  .pill input:checked + span {
+    background: var(--c-ink);
+    color: #fff;
+    box-shadow: none;
+  }
+  .pill--check input:checked + span::before {
+    content: '✓';
+    font-weight: 800;
+    color: var(--c-green);
+  }
+  .pill--block {
+    display: flex;
+    margin: 4px 0 6px;
+  }
+  .pill--block > span {
+    border-radius: 12px;
+  }
+
+  /* Modelos */
+  .models {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .models[hidden] {
+    display: none;
+  }
+  .model {
+    position: relative;
+  }
+  .model__box {
+    display: grid;
+    gap: 8px;
+    height: 100%;
+    padding: 8px 8px 14px;
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1.5px var(--c-ink-line);
+    cursor: pointer;
+    transition: box-shadow 0.2s, background 0.2s;
+  }
+  .model__t {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    padding: 4px 6px 0;
+    font: 800 18px/1.1 var(--f-display);
+    font-style: italic;
+  }
+  .model__t a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font: 600 13px var(--f-body);
+    color: var(--c-blue);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .model__t a :global(svg) {
+    width: 13px;
+    height: 13px;
+  }
+  .model__d {
+    padding: 0 6px;
+    font-size: 13.5px;
+    line-height: 1.4;
+    color: var(--c-ink-muted);
+  }
+  .model input:checked + .model__box {
+    background: #f1f8fd;
+    box-shadow: inset 0 0 0 2.5px var(--c-blue);
+  }
+
+  /* Campos */
+  .fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .fields[hidden] {
+    display: none;
+  }
+  .f {
+    display: grid;
+    gap: 6px;
+    align-content: start;
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 0;
+  }
+  .f--2 {
+    grid-column: span 2;
+  }
+  .f--full {
+    grid-column: 1 / -1;
+    margin-top: 14px;
+  }
+  .fields .f--full {
+    margin-top: 0;
+  }
+  .f b {
+    color: #c2410c;
+  }
+  .f b[hidden] {
+    display: none;
+  }
+  .f input:not([type='file']),
+  .f select,
+  .f textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--c-paper);
+    box-shadow: inset 0 0 0 1.5px var(--c-ink-line);
+    font-size: 16px;
+    font-weight: 500;
+    transition: box-shadow 0.2s, background 0.2s;
+  }
+  .f textarea {
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .f input:focus,
+  .f select:focus,
+  .f textarea:focus {
+    outline: none;
+    background: #fff;
+    box-shadow: inset 0 0 0 2px var(--c-blue);
+  }
+  .f input[type='file'] {
+    font-size: 14px;
+  }
+  .f small {
+    font-weight: 500;
+    color: var(--c-ink-muted);
+  }
+
+  /* Fotos */
+  .photos {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .photos[hidden] {
+    display: none;
+  }
+  .drop--big {
+    place-content: center;
+    justify-items: center;
+    gap: 8px;
+    min-height: 200px;
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 2px var(--c-ink-line);
+    background: var(--c-paper);
+    text-align: center;
+    font-weight: 500;
+  }
+  .drop__ic {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--c-ink);
+    color: var(--c-green);
+  }
+  .drop__ic :global(svg) {
+    width: 22px;
+  }
+  .drop--big input[type='file'] {
+    max-width: 100%;
+  }
+  .photos__guide {
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: var(--c-paper);
+    font-size: 14.5px;
+  }
+  .photos__gt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+  }
+  .photos__gt :global(svg) {
+    width: 18px;
+    color: var(--c-blue);
+  }
+  .photos__guide ul {
+    margin: 10px 0 0 18px;
+    display: grid;
+    gap: 4px;
+  }
+  .photos__tips {
+    margin-top: 12px;
+    font-weight: 600;
+    color: var(--c-ink-muted);
+  }
+  .previews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .previews:empty {
+    display: none;
+  }
+  .previews :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  /* Upsell */
+  .up-opt {
+    position: relative;
+    display: block;
+  }
+  .up-opt__box {
+    display: grid;
+    gap: 16px;
+    padding: clamp(18px, 2.4vw, 26px);
+    border-radius: 16px;
+    box-shadow: inset 0 0 0 2px var(--c-ink-line);
+    cursor: pointer;
+    transition: box-shadow 0.2s, background 0.2s;
+  }
+  .up-opt__head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    align-items: center;
+  }
+  .up-opt__check {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 2px var(--c-ink-line);
+    color: transparent;
+  }
+  .up-opt__check :global(svg) {
+    width: 18px;
+  }
+  .up-opt__t {
+    display: block;
+    font: 800 22px/1.1 var(--f-display);
+    font-style: italic;
+  }
+  .up-opt__d {
+    display: block;
+    margin-top: 4px;
+    color: var(--c-ink-muted);
+    font-size: 15px;
+  }
+  .up-opt__p {
+    font: 800 24px/1 var(--f-display);
+    white-space: nowrap;
+  }
+  .up-opt ul {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+  }
+  .up-opt li {
+    display: flex;
+    gap: 8px;
+    font-size: 15px;
+  }
+  .up-opt li :global(svg) {
+    flex: none;
+    width: 18px;
+    color: var(--c-blue);
+  }
+  .up-opt__aviso {
+    font-size: 13.5px;
+    color: var(--c-ink-muted);
+  }
+  .up-opt input:checked + .up-opt__box {
+    background: #f1f8fd;
+    box-shadow: inset 0 0 0 2.5px var(--c-blue);
+  }
+  .up-opt input:checked + .up-opt__box .up-opt__check {
+    background: var(--c-blue);
+    box-shadow: none;
+    color: #fff;
+  }
+  [data-gbp] {
+    margin-top: 16px;
+  }
+
+  /* Revisão e contrato */
+  .review {
+    display: grid;
+    border-radius: 14px;
+    background: var(--c-paper);
+    padding: 6px 18px;
+  }
+  .review :global(div) {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--c-ink-line);
+    font-size: 15px;
+  }
+  .review :global(div:last-child) {
+    border: 0;
+    font-weight: 800;
+  }
+  .review :global(dt) {
+    color: var(--c-ink-muted);
+  }
+  .review :global(dd) {
+    margin: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+  .terms {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    margin: 22px 0;
+  }
+  .terms li {
+    display: flex;
+    gap: 10px;
+    font-size: 15px;
+  }
+  .terms :global(svg) {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    color: var(--c-blue);
+  }
+  .contract {
+    margin-bottom: 18px;
+    border-radius: 12px;
+    box-shadow: inset 0 0 0 1.5px var(--c-ink-line);
+  }
+  .contract summary {
+    padding: 14px 16px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .contract__body {
+    max-height: 360px;
+    overflow: auto;
+    padding: 0 18px 18px;
+    font-size: 14px;
+    color: var(--c-ink-muted);
+    overscroll-behavior: contain;
+  }
+  .contract__body h3 {
+    margin: 16px 0 6px;
+    font: 700 15px var(--f-body);
+    color: var(--c-ink);
+  }
+  .contract__body ol {
+    padding-left: 18px;
+    display: grid;
+    gap: 4px;
+  }
+  .accept {
+    margin-bottom: 14px;
+  }
+
+  /* Navegação */
+  .wz__nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 22px;
+    border-top: 1px solid var(--c-ink-line);
+  }
+  .wz__nav [data-prev] {
+    margin-right: auto;
+  }
+  .wz__nav .btn :global(svg) {
+    width: 18px;
+  }
+  .wz__nav [hidden] {
+    display: none;
+  }
+  .wz__err {
+    margin-top: 12px;
+    color: #b91c1c;
+    font-weight: 600;
+  }
+
+  /* Resumo */
+  .wz__aside {
+    position: sticky;
+    top: calc(var(--header-h) + 16px);
+  }
+  .sum {
+    padding: 22px;
+    border-radius: var(--r-md);
+    background: var(--c-ink);
+    color: #fff;
+  }
+  .sum__t {
+    font: 800 20px var(--f-display);
+    font-style: italic;
+  }
+  .sum dl {
+    margin: 14px 0;
+    display: grid;
+    gap: 8px;
+  }
+  .sum dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14.5px;
+  }
+  .sum dl > div[hidden] {
+    display: none;
+  }
+  .sum dt {
+    color: var(--c-muted);
+  }
+  .sum dd {
+    margin: 0;
+    text-align: right;
+    font-weight: 600;
+  }
+  .sum__hoje,
+  .sum__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 12px;
+    border-top: 1px solid var(--c-line);
+  }
+  .sum__hoje strong {
+    font: 800 26px var(--f-display);
+    font-style: italic;
+    color: var(--c-green);
+  }
+  .sum__total {
+    margin-top: 10px;
+  }
+  .sum__total strong {
+    font: 800 22px var(--f-display);
+    font-style: italic;
+  }
+  .sum__parc {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--c-muted);
+  }
+
+  /* Concluído */
+  .done {
+    padding: calc(var(--header-h) + 60px) 0 var(--section-y);
+    min-height: 80vh;
+  }
+  .done__in {
+    max-width: 760px;
+  }
+  .done__ic {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 22px;
+    border-radius: 14px;
+    background: var(--c-green);
+    color: var(--c-green-ink);
+    transform: skewX(var(--slant));
+  }
+  .done__ic :global(svg) {
+    width: 32px;
+  }
+  .done .lead {
+    margin-top: 16px;
+  }
+  .done__test {
+    margin-top: 32px;
+    padding: 18px;
+    border-radius: 14px;
+    background: #fff7ed;
+    box-shadow: inset 0 0 0 1.5px #fed7aa;
+    font-size: 15px;
+  }
+  .done__test pre {
+    margin-top: 12px;
+    max-height: 420px;
+    overflow: auto;
+    padding: 14px;
+    border-radius: 10px;
+    background: var(--c-ink);
+    color: #d1fae5;
+    font-size: 12.5px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  @media (max-width: 1000px) {
+    .wz__in {
+      grid-template-columns: 1fr;
+    }
+    .wz__aside {
+      position: static;
+      order: -1;
+    }
+    .sum dl,
+    .sum__parc {
+      display: none;
+    }
+    .sum {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 18px;
+    }
+    .sum__hoje,
+    .sum__total {
+      display: grid;
+      gap: 2px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 12px;
+      color: var(--c-muted);
+    }
+    .sum__hoje strong,
+    .sum__total strong {
+      font-size: 20px;
+    }
+    .models {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 640px) {
+    .wz__form {
+      padding: 18px 16px 22px;
+      border-radius: 20px;
+    }
+    .wz__prog em {
+      display: none;
+    }
+    .wz__prog li.is-on em {
+      display: block;
+      position: absolute;
+      margin-top: 14px;
+    }
+    .wz__prog {
+      position: relative;
+      margin-bottom: 52px;
+    }
+    .opts--2,
+    .photos,
+    .fields {
+      grid-template-columns: 1fr;
+    }
+    .f--2 {
+      grid-column: auto;
+    }
+    .models {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .model__d {
+      display: none;
+    }
+    .up-opt__head {
+      grid-template-columns: auto 1fr;
+    }
+    .up-opt__p {
+      grid-column: 2;
+    }
+    .sum {
+      grid-template-columns: 1fr auto auto;
+    }
+  }
+</style>

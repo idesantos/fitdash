@@ -1,0 +1,756 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
+import ModelosGallery from '../components/ModelosGallery.astro';
+import Precos from '../components/Precos.astro';
+import GoogleIA from '../components/GoogleIA.astro';
+import antesDesktop from '../assets/case/antes-desktop.png';
+import depoisDesktop from '../assets/case/depois-desktop.png';
+import antesCelular from '../assets/case/antes-celular.png';
+import depoisCelular from '../assets/case/depois-celular.png';
+import { passos, incluso, ajustes, faq, upsell, prazoDias, parcelasMax, rodadasAjuste, black, blackAtiva } from '../data/oferta';
+import { url } from '../lib/url';
+
+const caso = {
+  nome: 'Aquacenter Vila Guilherme',
+  segmento: 'Natação e hidro · São Paulo',
+  antigo: 'aquacentervilaguilherme.com.br',
+  novo: 'https://idesantos.github.io/aquacenter/',
+  mudou: [
+    'Primeira tela com uma piscina de verdade: a água espirra e responde ao toque',
+    'Grade de horários fácil de ler, mostrando o que está aberto agora',
+    'WhatsApp com mensagem pronta em cada modalidade',
+    'Uma página para cada uma das 12 modalidades',
+    'A jornada do nadador, com os 7 níveis da metodologia',
+    'Endereços antigos mantidos, para não perder posição no Google',
+  ],
+};
+const ativa = blackAtiva();
+---
+<Base>
+  <!-- ============ HERO ============ -->
+  <section class="hero" data-hero>
+    <canvas class="hero__streaks" data-streaks aria-hidden="true"></canvas>
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="container hero__in">
+      <p class="hero__eyebrow">
+        {ativa && <span class="chip chip--green">{black.nome} · até 30/11</span>}
+        <span class="hero__seg">Sites para academias, studios e personais</span>
+      </p>
+      <h1 class="h-xl hero__title" data-split data-split-now data-split-delay="0.15">Seu site tem que estar à altura da <span class="hl">sua academia.</span></h1>
+      <p class="lead hero__lead" data-reveal>Site novo, rápido e feito para o celular, pronto em até {prazoDias} dias. <strong>Você só paga depois de ver pronto.</strong></p>
+      <div class="hero__ctas" data-reveal>
+        <a class="btn btn--green" href="#modelos" data-track="cta_hero"><span>Escolher meu modelo <Icon name="arrow" /></span></a>
+        <a class="btn btn--ghost" href="#case"><span>Ver antes e depois</span></a>
+      </div>
+      <ul class="hero__trust" data-reveal>
+        <li><Icon name="shield" /> Nada a pagar agora</li>
+        <li><Icon name="clock" /> Entrega em até {prazoDias} dias</li>
+        <li><Icon name="check" /> Pix, boleto ou até {parcelasMax}x</li>
+      </ul>
+    </div>
+    <div class="container hero__visual" data-hero-visual>
+      <BeforeAfter antesDesktop={antesDesktop} depoisDesktop={depoisDesktop} antesCelular={antesCelular} depoisCelular={depoisCelular} endereco={caso.antigo} nome={caso.nome} />
+    </div>
+  </section>
+
+  <!-- ============ CASE ============ -->
+  <section class="section case" id="case">
+    <div class="container case__in grid-safe">
+      <div>
+        <p class="eyebrow" data-reveal>Antes e depois de verdade</p>
+        <h2 class="h-lg case__title" data-split>Do site antigo à piscina que espirra.</h2>
+        <p class="lead" data-reveal>{caso.nome} · {caso.segmento}. Mesmas informações do site antigo, com outra cara e muito mais fácil de usar.</p>
+        <a class="btn btn--green case__cta" href={caso.novo} target="_blank" rel="noopener" data-track="viu_case" data-reveal><span>Ver o site novo ao vivo <Icon name="external" /></span></a>
+      </div>
+      <ul class="case__list">
+        {caso.mudou.map((m, i) => (
+          <li data-reveal><span class="case__n">{String(i + 1).padStart(2, '0')}</span>{m}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ MODELOS ============ -->
+  <section class="section paper cut-top" id="modelos">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow" data-reveal>Modelos</p>
+        <h2 class="h-lg" data-split>Escolha o modelo da sua academia.</h2>
+        <p class="lead" data-reveal>5 categorias, 3 modelos em cada. Todos com a sua marca, as suas fotos e os seus horários.</p>
+      </div>
+      <ModelosGallery />
+    </div>
+  </section>
+
+  <!-- ============ COMO FUNCIONA ============ -->
+  <section class="section steps cut-top" id="como-funciona">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow" data-reveal>Como funciona</p>
+        <h2 class="h-lg" data-split>Você assina hoje e só paga depois de ver o site pronto.</h2>
+      </div>
+      <div class="steps__wrap">
+        <span class="steps__line" data-progress-line aria-hidden="true"></span>
+        <ol class="steps__list grid-safe">
+          {passos.map((p, i) => (
+            <li class="step" data-reveal>
+              <span class="step__n">{i + 1}</span>
+              <h3 class="step__t">{p.titulo}</h3>
+              <p>{p.texto}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <p class="steps__after" data-reveal><Icon name="edit" /> Depois do pagamento, o site vai para o seu domínio e você tem {rodadasAjuste} rodadas de ajustes.</p>
+    </div>
+  </section>
+
+  <!-- ============ PREÇOS ============ -->
+  <section class="section paper cut-top" id="precos">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow" data-reveal>Preços</p>
+        <h2 class="h-lg" data-split>Menos que duas mensalidades.</h2>
+        <p class="lead" data-reveal>Um aluno novo já paga o site. E nada é cobrado antes da entrega.</p>
+      </div>
+      <Precos />
+    </div>
+  </section>
+
+  <!-- ============ GOOGLE E IA ============ -->
+  <section class="section gsec cut-top" id="google-ia">
+    <div class="container gsec__in grid-safe">
+      <div>
+        <p class="eyebrow" data-reveal>Google e IA</p>
+        <h2 class="h-lg" data-split>Quando alguém procura academia no seu bairro, quem aparece?</h2>
+        <p class="lead" data-reveal>Cada vez mais gente pergunta para o Google e para IAs como o ChatGPT. Com o adicional {upsell.nome}, a gente prepara sua academia para ser encontrada por eles.</p>
+        <ul class="gsec__list">
+          {upsell.itens.map((i) => <li data-reveal><Icon name="check" /> {i}</li>)}
+        </ul>
+        <p class="gsec__aviso" data-reveal>{upsell.aviso}</p>
+      </div>
+      <div data-reveal><GoogleIA /></div>
+    </div>
+  </section>
+
+  <!-- ============ INCLUSO + AJUSTES ============ -->
+  <section class="section paper cut-top" id="incluso">
+    <div class="container">
+      <div class="sec-head">
+        <p class="eyebrow" data-reveal>Tudo incluso</p>
+        <h2 class="h-lg" data-split>O que vem no seu site.</h2>
+      </div>
+      <ul class="feat grid-safe">
+        {incluso.map((f) => (
+          <li data-reveal>
+            <span class="feat__ic"><Icon name={f.icone as any} /></span>
+            <h3 class="feat__t">{f.titulo}</h3>
+            <p>{f.texto}</p>
+          </li>
+        ))}
+      </ul>
+
+      <div class="adj grid-safe" data-reveal>
+        <div class="adj__col">
+          <h3 class="h-md">Suas {rodadasAjuste} rodadas de ajustes</h3>
+          <p class="adj__sub">Cada rodada é uma lista única, feita em até 3 dias úteis.</p>
+          <ul>{ajustes.entra.map((a) => <li><Icon name="check" /> {a}</li>)}</ul>
+        </div>
+        <div class="adj__col adj__col--fora">
+          <h3 class="h-md">Fica de fora</h3>
+          <p class="adj__sub">Dá para fazer depois, como serviço à parte.</p>
+          <ul>{ajustes.naoEntra.map((a) => <li><Icon name="x" /> {a}</li>)}</ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GARANTIA ============ -->
+  <section class="section guar cut-top">
+    <div class="container guar__in">
+      <h2 class="h-xl" data-split>Nada a pagar até ver o site <span class="hl">pronto.</span></h2>
+      <ul class="guar__list grid-safe">
+        <li data-reveal><Icon name="lock" /><strong>Sem cartão no cadastro</strong><span>Você só preenche e aceita o contrato.</span></li>
+        <li data-reveal><Icon name="clock" /><strong>Prazo em contrato</strong><span>Até {prazoDias} dias depois do material completo.</span></li>
+        <li data-reveal><Icon name="shield" /><strong>Pagamento depois da entrega</strong><span>Pix, boleto ou até {parcelasMax}x no cartão.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ DÚVIDAS ============ -->
+  <section class="section paper cut-top" id="duvidas">
+    <div class="container faq grid-safe">
+      <div>
+        <p class="eyebrow" data-reveal>Dúvidas</p>
+        <h2 class="h-lg" data-split>Perguntas que todo dono de academia faz.</h2>
+        <p class="lead faq__more" data-reveal>Quer ler tudo antes? <a href={url('/termos/')}>Veja o contrato completo</a>.</p>
+      </div>
+      <div class="faq__list">
+        {faq.map((f) => (
+          <details class="faq__item" data-reveal>
+            <summary>{f.p}<span class="faq__ic" aria-hidden="true"></span></summary>
+            <p>{f.r}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA FINAL ============ -->
+  <section class="section final cut-top">
+    <canvas class="hero__streaks" data-streaks aria-hidden="true"></canvas>
+    <div class="container final__in">
+      <h2 class="h-xl" data-split>Sua academia é a melhor do bairro. Seu site precisa mostrar isso.</h2>
+      <div class="final__ctas" data-reveal>
+        <a class="btn btn--green" href={url('/comecar/')} data-track="cta_final"><span>Começar meu site <Icon name="arrow" /></span></a>
+        <a class="btn btn--ghost" href="#modelos"><span>Ver os modelos</span></a>
+      </div>
+    </div>
+  </section>
+
+  <nav class="mbar" aria-label="Ação rápida" data-mbar slot="fim">
+    <a class="btn btn--green" href={url('/comecar/')} data-track="cta_mbar"><span>Quero meu site <Icon name="arrow" /></span></a>
+    <p>Só paga depois de pronto</p>
+  </nav>
+</Base>
+
+<script>
+  import { gsap, reduced } from '../scripts/motion';
+
+  // O navegador do antes/depois "deita" e se endireita conforme a página desce.
+  const visual = document.querySelector<HTMLElement>('[data-hero-visual] .ba__browser');
+  if (visual && !reduced && matchMedia('(min-width: 721px)').matches) {
+    gsap.fromTo(
+      visual,
+      { rotateX: 16, y: 40, scale: 0.94, transformPerspective: 1400, transformOrigin: '50% 0%' },
+      { rotateX: 0, y: 0, scale: 1, ease: 'none', scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom 55%', scrub: 0.5 } },
+    );
+  }
+</script>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: calc(var(--header-h) + clamp(24px, 4.5vh, 64px)) 0 clamp(90px, 12vw, 170px);
+    background: var(--c-bg);
+  }
+  .hero__streaks {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .hero__glow {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(50% 40% at 50% 62%, rgb(36 141 207 / 32%), transparent 70%),
+      radial-gradient(30% 25% at 80% 20%, rgb(17 244 178 / 10%), transparent 70%);
+    pointer-events: none;
+  }
+  .hero__in {
+    position: relative;
+    text-align: center;
+    display: grid;
+    justify-items: center;
+  }
+  .hero__eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--c-muted);
+  }
+  .hero__title {
+    max-width: 15ch;
+    margin-top: 18px;
+    font-size: clamp(40px, min(6.2vw, 9.4vh), 92px);
+  }
+  .hero__lead {
+    max-width: 44ch;
+    margin-top: 18px;
+  }
+  .hero__lead strong {
+    color: #fff;
+  }
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 26px;
+  }
+  .hero__ctas .btn :global(svg) {
+    width: 18px;
+  }
+  .hero__trust {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 24px;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--c-muted);
+  }
+  .hero__trust li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero__trust :global(svg) {
+    width: 17px;
+    height: 17px;
+    color: var(--c-green);
+  }
+  .hero__visual {
+    position: relative;
+    max-width: 1040px;
+    margin-top: clamp(36px, 5vh, 64px);
+    padding-right: 3%;
+    perspective: 1400px;
+  }
+
+  /* ---------- Cabeçalhos de seção ---------- */
+  .sec-head {
+    max-width: 760px;
+    margin-bottom: clamp(32px, 4vw, 56px);
+  }
+  .sec-head h2 {
+    margin-top: 16px;
+  }
+  .sec-head .lead {
+    margin-top: 18px;
+  }
+
+  /* ---------- Case ---------- */
+  .case {
+    background: var(--c-bg);
+    padding-top: clamp(60px, 8vw, 110px);
+  }
+  .case__in {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 6vw, 90px);
+    align-items: start;
+  }
+  .case__title {
+    margin: 16px 0 20px;
+  }
+  .case__cta {
+    margin-top: 30px;
+  }
+  .case__cta :global(svg) {
+    width: 18px;
+  }
+  .case__list {
+    list-style: none;
+    display: grid;
+    gap: 2px;
+  }
+  .case__list li {
+    display: flex;
+    gap: 18px;
+    align-items: baseline;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--c-line);
+    font-size: 17px;
+  }
+  .case__n {
+    flex: none;
+    font: 800 14px var(--f-display);
+    font-style: italic;
+    color: var(--c-green);
+  }
+
+  /* ---------- Passos ---------- */
+  .steps {
+    background: var(--c-bg-2);
+  }
+  .steps__wrap {
+    position: relative;
+  }
+  .steps__line {
+    --p: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 27px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--c-blue), var(--c-green)) 0 0 / calc(var(--p) * 100%) 100% no-repeat, var(--c-line);
+  }
+  .steps__list {
+    position: relative;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
+  .step__n {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    background: var(--c-surface-2);
+    box-shadow: inset 0 0 0 1.5px var(--c-blue);
+    font: 800 24px/1 var(--f-display);
+    font-style: italic;
+    transform: skewX(var(--slant));
+  }
+  .step__t {
+    margin: 22px 0 10px;
+    font-size: 24px;
+  }
+  .step p {
+    color: var(--c-muted);
+    font-size: 16px;
+  }
+  .steps__after {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 44px;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: rgb(17 244 178 / 8%);
+    box-shadow: inset 0 0 0 1px rgb(17 244 178 / 25%);
+    font-weight: 600;
+  }
+  .steps__after :global(svg) {
+    flex: none;
+    width: 20px;
+    color: var(--c-green);
+  }
+
+  /* ---------- Google e IA ---------- */
+  .gsec {
+    background: var(--c-bg);
+  }
+  .gsec__in {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+  }
+  .gsec h2 {
+    margin: 16px 0 20px;
+  }
+  .gsec__list {
+    list-style: none;
+    display: grid;
+    gap: 12px;
+    margin-top: 26px;
+  }
+  .gsec__list li {
+    display: flex;
+    gap: 10px;
+  }
+  .gsec__list :global(svg) {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    color: var(--c-green);
+  }
+  .gsec__aviso {
+    margin-top: 22px;
+    font-size: 14px;
+    color: var(--c-muted);
+  }
+
+  /* ---------- Incluso ---------- */
+  .feat {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .feat li {
+    padding: 24px;
+    border-radius: var(--r-md);
+    background: #fff;
+    box-shadow: 0 1px 2px rgb(11 15 23 / 5%);
+  }
+  .feat__ic {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--c-ink);
+    color: var(--c-green);
+  }
+  .feat__ic :global(svg) {
+    width: 22px;
+    height: 22px;
+  }
+  .feat__t {
+    margin: 16px 0 6px;
+    font-size: 21px;
+  }
+  .feat p {
+    color: var(--c-ink-muted);
+    font-size: 15.5px;
+  }
+  .adj {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .adj__col {
+    padding: clamp(24px, 3vw, 36px);
+    border-radius: var(--r-lg);
+    background: var(--c-ink);
+    color: #fff;
+  }
+  .adj__col--fora {
+    background: #fff;
+    color: var(--c-ink);
+    box-shadow: inset 0 0 0 1.5px var(--c-ink-line);
+  }
+  .adj__sub {
+    margin: 8px 0 18px;
+    color: var(--c-muted);
+    font-size: 15px;
+  }
+  .adj__col--fora .adj__sub {
+    color: var(--c-ink-muted);
+  }
+  .adj ul {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+  .adj li {
+    display: flex;
+    gap: 10px;
+  }
+  .adj li :global(svg) {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    color: var(--c-green);
+  }
+  .adj__col--fora li :global(svg) {
+    color: #c2410c;
+  }
+
+  /* ---------- Garantia ---------- */
+  .guar {
+    background:
+      radial-gradient(60% 80% at 15% 100%, rgb(36 141 207 / 30%), transparent 70%),
+      var(--c-bg);
+  }
+  .guar__in h2 {
+    max-width: 16ch;
+  }
+  .guar__list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: clamp(36px, 5vw, 60px);
+  }
+  .guar__list li {
+    display: grid;
+    gap: 6px;
+    padding: 24px;
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    box-shadow: inset 0 0 0 1px var(--c-line);
+  }
+  .guar__list :global(svg) {
+    width: 26px;
+    height: 26px;
+    margin-bottom: 8px;
+    color: var(--c-green);
+  }
+  .guar__list strong {
+    font: 800 20px/1.15 var(--f-display);
+    font-style: italic;
+  }
+  .guar__list span {
+    color: var(--c-muted);
+  }
+
+  /* ---------- Dúvidas ---------- */
+  .faq {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: start;
+  }
+  .faq h2 {
+    margin-top: 16px;
+  }
+  .faq__more {
+    margin-top: 20px;
+  }
+  .faq__more a {
+    color: var(--c-blue);
+    font-weight: 700;
+  }
+  .faq__list {
+    display: grid;
+    gap: 10px;
+  }
+  .faq__item {
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgb(11 15 23 / 5%);
+  }
+  .faq__item summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 22px;
+    font-weight: 700;
+    font-size: 17px;
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq__ic {
+    position: relative;
+    flex: none;
+    width: 22px;
+    height: 22px;
+  }
+  .faq__ic::before,
+  .faq__ic::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    top: 10px;
+    height: 2px;
+    background: var(--c-blue);
+    transition: transform 0.3s var(--ease-out);
+  }
+  .faq__ic::after {
+    transform: rotate(90deg);
+  }
+  .faq__item[open] .faq__ic::after {
+    transform: rotate(0);
+  }
+  .faq__item p {
+    padding: 0 22px 22px;
+    color: var(--c-ink-muted);
+  }
+
+  /* ---------- CTA final ---------- */
+  .final {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(70% 90% at 50% 120%, rgb(17 244 178 / 22%), transparent 70%),
+      radial-gradient(60% 70% at 50% -10%, rgb(36 141 207 / 40%), transparent 70%),
+      var(--c-bg);
+    text-align: center;
+  }
+  .final__in {
+    position: relative;
+    display: grid;
+    justify-items: center;
+  }
+  .final h2 {
+    max-width: 18ch;
+  }
+  .final__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 36px;
+  }
+  .final__ctas .btn :global(svg) {
+    width: 18px;
+  }
+
+  /* ---------- Barra fixa no celular ---------- */
+  .mbar {
+    display: none;
+  }
+
+  @media (max-width: 1000px) {
+    .steps__list {
+      grid-template-columns: 1fr 1fr;
+      row-gap: 40px;
+    }
+    .steps__line {
+      display: none;
+    }
+    .feat {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 860px) {
+    .case__in,
+    .gsec__in,
+    .faq,
+    .adj {
+      grid-template-columns: 1fr;
+    }
+    .guar__list {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 720px) {
+    .hero__visual {
+      padding-right: 0;
+    }
+    .mbar {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: calc(12px + env(safe-area-inset-bottom));
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 16px 10px 10px;
+      border-radius: 16px;
+      background: rgb(12 16 24 / 88%);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow:
+        0 0 0 1px var(--c-line),
+        0 20px 40px -10px rgb(0 0 0 / 60%);
+      transform: translateY(150%);
+      transition: transform 0.5s var(--ease-out);
+    }
+    .mbar:global(.is-on) {
+      transform: none;
+    }
+    .mbar .btn {
+      flex: none;
+      min-height: 48px;
+      padding: 0 20px;
+    }
+    .mbar .btn :global(svg) {
+      width: 18px;
+    }
+    .mbar p {
+      font-size: 13px;
+      line-height: 1.3;
+      color: var(--c-muted);
+    }
+    .steps__list,
+    .feat {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

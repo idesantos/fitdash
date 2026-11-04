@@ -1,0 +1,176 @@
+---
+// Modelo Raia: as raias da piscina dividem as seções e deslizam com a rolagem.
+import '@fontsource-variable/archivo/standard.css';
+import { Image } from 'astro:assets';
+import DemoPage from '../../components/demo/DemoPage.astro';
+import demo from '../../data/demos/raia';
+const h = demo.hero;
+---
+<DemoPage demo={demo} tema="raia">
+  <section class="ra-hero" slot="hero">
+    <div class="ra-bg"><Image src={h.foto!} alt="" widths={[800, 1280, 1600]} sizes="100vw" loading="eager" /></div>
+    <div class="d-wrap ra-in">
+      <p class="ra-tag">{h.eyebrow}</p>
+      <h1 class="d-h1">Nade no seu <span>ritmo.</span></h1>
+      <p class="d-hero__txt">{h.texto}</p>
+      <div class="d-hero__ctas">
+        <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+        <a class="d-btn d-btn--ghost" href={h.ctaSec!.href}>{h.ctaSec!.label}</a>
+      </div>
+      <ul class="d-selos">{h.selos!.map((s) => <li>{s}</li>)}</ul>
+    </div>
+    <div class="ra-corda ra-corda--hero" data-corda aria-hidden="true"></div>
+    <div class="ra-num" aria-hidden="true">8</div>
+  </section>
+</DemoPage>
+
+<style is:global>
+  .demo.demo--raia {
+    --d-bg: #f4fbff;
+    --d-bg-2: #e3f4fc;
+    --d-surface: #ffffff;
+    --d-fg: #06284a;
+    --d-muted: #4b6a85;
+    --d-line: rgb(6 40 74 / 10%);
+    --d-accent: #00a3df;
+    --d-accent-fg: #ffffff;
+    --d-hdr-bg: rgb(244 251 255 / 88%);
+    --d-hdr-fg: #06284a;
+    --d-display: 'Archivo Variable', system-ui, sans-serif;
+    --d-dw: 800;
+    --d-dstretch: 118%;
+    --d-dls: -0.035em;
+    --d-dlh: 0.98;
+    --d-r: 18px;
+    --d-shadow: 0 1px 2px rgb(6 40 74 / 6%), 0 22px 44px -30px rgb(6 40 74 / 40%);
+  }
+  .demo--raia .d-num strong {
+    color: var(--d-fg);
+  }
+  .demo--raia .d-num div {
+    padding-left: 18px;
+    border-left: 4px solid var(--d-accent);
+  }
+  .demo--raia .d-pas__item::before {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--d-accent);
+    color: #fff;
+    font-size: 20px;
+  }
+  .demo--raia .d-pla__item.is-destaque {
+    background: var(--d-fg);
+  }
+
+  /* Corda de raia: boias vermelhas e brancas */
+  .ra-corda,
+  .demo--raia .d-div {
+    --x: 0px;
+    display: block;
+    height: 22px;
+    background:
+      radial-gradient(ellipse 10px 8px at 50% 50%, #ff4d4d 92%, transparent 100%) var(--x) 50% / 48px 22px repeat-x,
+      radial-gradient(ellipse 10px 8px at 50% 50%, #ffffff 92%, transparent 100%) calc(var(--x) + 24px) 50% / 48px 22px repeat-x,
+      linear-gradient(#0d4f86, #0d4f86) 0 50% / 100% 2px no-repeat;
+    filter: drop-shadow(0 3px 2px rgb(6 40 74 / 25%));
+  }
+  .demo--raia .d-div {
+    margin: 0;
+    background-color: var(--d-bg);
+  }
+  .demo--raia .d-div i {
+    display: none;
+  }
+  .ra-corda--hero {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+  }
+
+  /* Hero */
+  .ra-hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    padding: calc(var(--d-ribbon-h) + var(--d-hdr-h) + 40px) 0 clamp(70px, 12vh, 130px);
+    color: #fff;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .ra-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .ra-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 60% 40%;
+  }
+  .ra-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(6 40 74 / 25%), rgb(6 40 74 / 10%) 35%, rgb(6 40 74 / 85%));
+  }
+  .ra-tag {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 16%);
+    backdrop-filter: blur(8px);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .ra-in .d-h1 {
+    margin-top: 20px;
+  }
+  .ra-in .d-h1 span {
+    color: #8fe3ff;
+  }
+  .ra-num {
+    position: absolute;
+    right: 4vw;
+    top: 18vh;
+    z-index: -1;
+    font-family: 'Archivo Variable', sans-serif;
+    font-size: clamp(160px, 26vw, 420px);
+    font-weight: 900;
+    line-height: 0.8;
+    color: transparent;
+    -webkit-text-stroke: 2px rgb(255 255 255 / 45%);
+  }
+  .demo--raia .d-hdr:not(.is-solid) .d-btn {
+    background: #fff;
+    color: var(--d-fg);
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, lenis, reduced } from '../../scripts/demo/base';
+
+  // As cordas andam com a rolagem, em sentidos alternados, e aceleram com a velocidade.
+  const cordas = [...document.querySelectorAll<HTMLElement>('[data-corda], .demo--raia [data-div]')];
+  if (!reduced) {
+    let vel = 0;
+    lenis?.on('scroll', ({ velocity }: { velocity: number }) => (vel = velocity));
+    gsap.ticker.add(() => {
+      const y = scrollY;
+      cordas.forEach((c, i) => {
+        const dir = i % 2 ? -1 : 1;
+        c.style.setProperty('--x', `${(dir * (y * 0.35 + vel * 2)).toFixed(1)}px`);
+      });
+      vel *= 0.9;
+    });
+    gsap.from('.ra-in > *', { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.08, delay: 0.1 });
+    gsap.to('.ra-bg img', { scale: 1.12, ease: 'none', scrollTrigger: { trigger: '.ra-hero', start: 'top top', end: 'bottom top', scrub: true } });
+  }
+  void ScrollTrigger;
+</script>

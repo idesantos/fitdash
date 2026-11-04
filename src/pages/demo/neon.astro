@@ -1,0 +1,234 @@
+---
+// Modelo Neon: letreiro que acende letra por letra quando a página abre.
+import '@fontsource-variable/archivo/standard.css';
+import { Image } from 'astro:assets';
+import DemoPage from '../../components/demo/DemoPage.astro';
+import demo from '../../data/demos/neon';
+const h = demo.hero;
+const linhas = ['Aberto', 'quando você', 'puder.'];
+// Ordem pseudoaleatória fixa para as letras acenderem fora de sequência.
+let n = 0;
+const atraso = () => ((n++ * 37) % 23) * 0.06 + 0.3;
+---
+<DemoPage demo={demo} tema="neon">
+  <section class="ne-hero" slot="hero">
+    <div class="ne-bg"><Image src={h.foto!} alt="" widths={[800, 1280, 1600]} sizes="100vw" loading="eager" /></div>
+    <div class="ne-24" aria-hidden="true">24H</div>
+    <div class="d-wrap ne-in">
+      <p class="ne-open"><i></i> Aberto agora · {h.eyebrow}</p>
+      <h1 class="ne-sign" aria-label={h.titulo}>
+        {linhas.map((l) => (
+          <span class="ne-line" aria-hidden="true">
+            {[...l].map((c) => (c === ' ' ? ' ' : <span class="ne-c" style={`--d:${atraso().toFixed(2)}s`}>{c}</span>))}
+          </span>
+        ))}
+      </h1>
+      <p class="d-hero__txt">{h.texto}</p>
+      <div class="d-hero__ctas">
+        <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+        <a class="d-btn d-btn--ghost" href={h.ctaSec!.href}>{h.ctaSec!.label}</a>
+      </div>
+      <ul class="d-selos">{h.selos!.map((s) => <li>{s}</li>)}</ul>
+    </div>
+  </section>
+</DemoPage>
+
+<style is:global>
+  .demo.demo--neon {
+    --d-bg: #0a0618;
+    --d-bg-2: #0f0a22;
+    --d-surface: #140e2b;
+    --d-fg: #ffffff;
+    --d-muted: #a79fc4;
+    --d-line: rgb(255 255 255 / 10%);
+    --d-accent: #c6ff00;
+    --d-accent-fg: #0a0618;
+    --d-pink: #ff2bd6;
+    --d-hdr-bg: rgb(10 6 24 / 85%);
+    --d-hdr-fg: #fff;
+    --d-display: 'Archivo Variable', system-ui, sans-serif;
+    --d-dw: 800;
+    --d-dstretch: 125%;
+    --d-dls: -0.04em;
+    --d-dlh: 0.95;
+    --d-r: 18px;
+    --d-h2: clamp(32px, 4.6vw, 66px);
+    --d-shadow: none;
+    --d-card-border: inset 0 0 0 1px rgb(198 255 0 / 14%);
+  }
+  .demo--neon .d-h2 {
+    transition: text-shadow 0.8s, color 0.8s;
+    color: #e9e6f5;
+  }
+  .demo--neon .d-h2.is-lit {
+    color: #fff;
+    text-shadow: 0 0 18px rgb(255 43 214 / 55%), 0 0 42px rgb(255 43 214 / 30%);
+  }
+  .demo--neon .d-eyebrow {
+    color: var(--d-pink);
+    text-shadow: 0 0 12px rgb(255 43 214 / 60%);
+  }
+  .demo--neon .d-num strong {
+    text-shadow: 0 0 20px rgb(198 255 0 / 55%);
+  }
+  .demo--neon .d-card {
+    transition: box-shadow 0.4s;
+  }
+  .demo--neon .d-card:hover {
+    box-shadow: inset 0 0 0 1px var(--d-accent), 0 0 30px -6px rgb(198 255 0 / 45%);
+  }
+  .demo--neon .d-btn {
+    box-shadow: 0 0 24px -4px rgb(198 255 0 / 70%);
+  }
+  .demo--neon .d-btn--ghost {
+    box-shadow: inset 0 0 0 1.5px var(--d-pink), 0 0 20px -6px rgb(255 43 214 / 70%);
+  }
+  .demo--neon .d-pla__item.is-destaque {
+    background: linear-gradient(160deg, #1e1240, #140e2b);
+    color: #fff;
+    box-shadow: inset 0 0 0 1.5px var(--d-accent), 0 0 40px -10px rgb(198 255 0 / 50%);
+  }
+  .demo--neon .d-hor td span {
+    background: rgb(255 43 214 / 16%);
+  }
+  .demo--neon .d-cta__box {
+    background: radial-gradient(80% 120% at 50% 0%, rgb(255 43 214 / 30%), transparent 70%), #140e2b;
+    color: #fff;
+    box-shadow: inset 0 0 0 1.5px rgb(255 43 214 / 50%), 0 0 60px -20px rgb(255 43 214 / 60%);
+  }
+  .demo--neon .d-cta__box .d-btn {
+    background: var(--d-accent);
+    color: var(--d-accent-fg);
+  }
+  .demo--neon .d-map {
+    filter: invert(0.9) hue-rotate(200deg) saturate(1.4);
+  }
+  .demo--neon .d-map__pin {
+    filter: invert(0.9) hue-rotate(160deg);
+  }
+
+  /* Hero */
+  .ne-hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding: calc(var(--d-ribbon-h) + var(--d-hdr-h) + 30px) 0 60px;
+    overflow: hidden;
+    isolation: isolate;
+    color: #fff;
+  }
+  .ne-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .ne-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.35) saturate(1.3) hue-rotate(20deg);
+  }
+  .ne-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, rgb(0 0 0 / 18%) 0 1px, transparent 1px 3px),
+      radial-gradient(80% 70% at 30% 50%, transparent, #0a0618 95%);
+  }
+  .ne-24 {
+    position: absolute;
+    right: -2vw;
+    bottom: -4vw;
+    z-index: -1;
+    font-family: 'Archivo Variable', sans-serif;
+    font-size: clamp(180px, 34vw, 520px);
+    font-weight: 900;
+    line-height: 0.8;
+    font-stretch: 125%;
+    color: transparent;
+    -webkit-text-stroke: 3px #ff2bd6;
+    filter: drop-shadow(0 0 10px #ff2bd6) drop-shadow(0 0 30px rgb(255 43 214 / 60%));
+    opacity: 0;
+    animation: ne-24 2.4s steps(1) 1.6s forwards, ne-zumbido 7s steps(1) 5s infinite;
+  }
+  @keyframes ne-24 {
+    0% { opacity: 0; }
+    8% { opacity: 0.55; }
+    12% { opacity: 0.1; }
+    20% { opacity: 0.55; }
+    24% { opacity: 0.2; }
+    34%, 100% { opacity: 0.55; }
+  }
+  @keyframes ne-zumbido {
+    0%, 91%, 94%, 100% { opacity: 0.55; }
+    92%, 93% { opacity: 0.25; }
+  }
+  .ne-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgb(198 255 0 / 10%);
+    box-shadow: inset 0 0 0 1px rgb(198 255 0 / 35%);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--d-accent);
+  }
+  .ne-open i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--d-accent);
+    box-shadow: 0 0 10px var(--d-accent);
+    animation: ne-pulso 1.6s infinite;
+  }
+  @keyframes ne-pulso {
+    50% { opacity: 0.3; }
+  }
+  .ne-sign {
+    margin-top: 24px;
+    font-family: 'Archivo Variable', sans-serif;
+    font-size: clamp(52px, 8.4vw, 136px);
+    font-weight: 800;
+    line-height: 0.95;
+    font-stretch: 125%;
+    letter-spacing: -0.04em;
+  }
+  .ne-line {
+    display: block;
+  }
+  .ne-c {
+    color: #2a2440;
+    animation: ne-on 1.3s steps(1) forwards;
+    animation-delay: var(--d);
+  }
+  @keyframes ne-on {
+    0% { color: #2a2440; text-shadow: none; }
+    10%, 22%, 44%, 100% { color: #f4ffd0; text-shadow: 0 0 6px #c6ff00, 0 0 18px #c6ff00, 0 0 42px rgb(198 255 0 / 70%); }
+    14%, 30% { color: #3a3355; text-shadow: none; }
+  }
+  .ne-in .d-hero__txt {
+    max-width: 48ch;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ne-c {
+      color: #f4ffd0;
+      text-shadow: 0 0 6px #c6ff00, 0 0 18px #c6ff00;
+    }
+    .ne-24 {
+      opacity: 0.55;
+    }
+  }
+</style>
+
+<script>
+  // Títulos de seção acendem quando entram na tela.
+  const io = new IntersectionObserver(
+    (es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add('is-lit'), io.unobserve(e.target))),
+    { rootMargin: '0px 0px -20% 0px' },
+  );
+  document.querySelectorAll('.demo--neon .d-h2').forEach((h) => io.observe(h));
+</script>

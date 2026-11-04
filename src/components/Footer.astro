@@ -1,0 +1,80 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/marca/logo-claro.png';
+import { marca } from '../data/oferta';
+import { url } from '../lib/url';
+const ano = new Date().getFullYear();
+---
+<footer class="ftr">
+  <div class="container ftr__in">
+    <div class="ftr__brand">
+      <Image src={logo} alt="FitDash" width={170} height={27} />
+      <p>{marca.descricao}</p>
+    </div>
+    <nav class="ftr__links" aria-label="Rodapé">
+      <a href={`${url('/')}#modelos`}>Modelos</a>
+      <a href={`${url('/')}#precos`}>Preços</a>
+      <a href={`${url('/')}#duvidas`}>Dúvidas</a>
+      <a href={url('/comecar/')}>Começar meu site</a>
+      <a href={url('/termos/')}>Contrato</a>
+    </nav>
+  </div>
+  <div class="container ftr__bottom">
+    <p>© {ano} {marca.razaoSocial || marca.nome}{marca.cnpj && ` · CNPJ ${marca.cnpj}`}</p>
+    <p>Pagamentos processados pelo Asaas.</p>
+  </div>
+</footer>
+
+<style>
+  .ftr {
+    position: relative;
+    padding: clamp(56px, 7vw, 96px) 0 calc(28px + env(safe-area-inset-bottom));
+    background: var(--c-bg);
+    border-top: 1px solid var(--c-line);
+  }
+  .ftr__in {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .ftr__brand img {
+    width: 150px;
+    height: auto;
+  }
+  .ftr__brand p {
+    margin-top: 14px;
+    color: var(--c-muted);
+    max-width: 32ch;
+  }
+  .ftr__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+  }
+  .ftr__links a {
+    font-weight: 600;
+    text-decoration: none;
+    color: rgb(255 255 255 / 80%);
+  }
+  .ftr__links a:hover {
+    color: #fff;
+  }
+  .ftr__bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 48px;
+    padding-top: 22px;
+    border-top: 1px solid var(--c-line);
+    font-size: 14px;
+    color: var(--c-muted);
+  }
+  @media (max-width: 720px) {
+    .ftr {
+      padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    }
+  }
+</style>

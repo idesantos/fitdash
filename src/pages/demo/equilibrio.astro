@@ -1,0 +1,232 @@
+---
+// Modelo Equilíbrio: linhas desalinhadas que se alinham conforme a página desce.
+import '@fontsource-variable/outfit/wght.css';
+import DemoPage from '../../components/demo/DemoPage.astro';
+import demo from '../../data/demos/equilibrio';
+const h = demo.hero;
+// Cada linha começa fora do eixo: [deslocamento %, largura %, inclinação graus]
+const linhas = [
+  [-22, 46, -6], [18, 62, 4], [-8, 38, -3], [26, 54, 7], [-30, 70, -5], [12, 42, 3], [-16, 58, -8], [24, 34, 5], [-4, 66, -2],
+];
+---
+<DemoPage demo={demo} tema="equilibrio">
+  <section class="eq-hero" slot="hero" data-eq>
+    <div class="eq-stage">
+      <div class="d-wrap eq-in">
+        <p class="d-eyebrow">{h.eyebrow}</p>
+        <h1 class="d-h1">Precisão em cada <em>movimento.</em></h1>
+        <div class="eq-linhas" aria-hidden="true">
+          {linhas.map(([x, w, r]) => <i style={`--x:${x}%;--w:${w}%;--r:${r}deg`}></i>)}
+          <span class="eq-nivel" data-eq-nivel>fora do eixo</span>
+        </div>
+        <div class="eq-pe">
+          <p class="d-hero__txt">{h.texto}</p>
+          <div class="d-hero__ctas">
+            <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+            <a class="d-btn d-btn--ghost" href={h.ctaSec!.href}>{h.ctaSec!.label}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</DemoPage>
+
+<style is:global>
+  .demo.demo--equilibrio {
+    --d-bg: #ffffff;
+    --d-bg-2: #f6f5fb;
+    --d-surface: #ffffff;
+    --d-fg: #1d2340;
+    --d-muted: #6a6f87;
+    --d-line: rgb(29 35 64 / 12%);
+    --d-accent: #8b7fd1;
+    --d-accent-fg: #ffffff;
+    --d-hdr-bg: rgb(255 255 255 / 90%);
+    --d-hdr-fg: #1d2340;
+    --d-hero-fg: #1d2340;
+    --d-font: 'Outfit Variable', system-ui, sans-serif;
+    --d-display: 'Outfit Variable', system-ui, sans-serif;
+    --d-dw: 200;
+    --d-dls: -0.04em;
+    --d-dlh: 1.02;
+    --d-r: 0;
+    --d-btn-r: 999px;
+    --d-h1: clamp(46px, 6.4vw, 104px);
+    --d-h2: clamp(36px, 4.8vw, 72px);
+    --d-mod-cols: 4;
+    --d-shadow: none;
+    --d-card-border: inset 0 0 0 1px rgb(29 35 64 / 10%);
+  }
+  .demo--equilibrio .d-h1 em,
+  .demo--equilibrio .d-h2 em {
+    font-style: normal;
+    color: var(--d-accent);
+  }
+  .demo--equilibrio .d-logo {
+    font-weight: 300;
+    font-size: 26px;
+    letter-spacing: 0.08em;
+  }
+  .demo--equilibrio .d-btn {
+    font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+  .demo--equilibrio .d-eyebrow {
+    font-weight: 400;
+    letter-spacing: 0.3em;
+  }
+  .demo--equilibrio .d-h3 {
+    font-weight: 400;
+  }
+  .demo--equilibrio .d-head {
+    position: relative;
+    padding-top: 26px;
+  }
+  .demo--equilibrio .d-head::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--d-fg);
+    transform-origin: left;
+    transform: scaleX(var(--linha, 0));
+    transition: transform 1.6s var(--ease);
+  }
+  .demo--equilibrio .d-head.is-on::before {
+    --linha: 1;
+  }
+  .demo--equilibrio .d-mod__img img,
+  .demo--equilibrio .d-gal__item img,
+  .demo--equilibrio .d-sobre__img img {
+    filter: grayscale(1) contrast(1.05);
+    transition: filter 0.8s;
+  }
+  .demo--equilibrio .d-mod__item:hover img,
+  .demo--equilibrio .d-gal__item:hover img {
+    filter: none;
+  }
+  .demo--equilibrio .d-gal__item {
+    border-radius: 0;
+  }
+  .demo--equilibrio .d-pla__item.is-destaque {
+    background: var(--d-accent);
+    color: #fff;
+  }
+  .demo--equilibrio .d-pla__item.is-destaque li::before {
+    color: #fff;
+  }
+  .demo--equilibrio .d-pla__item.is-destaque .d-btn {
+    background: #fff;
+    color: var(--d-accent);
+  }
+  .demo--equilibrio .d-eq__ini {
+    font-weight: 200;
+  }
+  .demo--equilibrio .d-cta__box {
+    background: var(--d-fg);
+  }
+  .demo--equilibrio .d-cta__box .d-btn {
+    background: var(--d-accent);
+    color: #fff;
+  }
+  @media (max-width: 900px) {
+    .demo.demo--equilibrio {
+      --d-mod-cols: 2;
+    }
+  }
+
+  /* Hero com as linhas */
+  .eq-hero {
+    position: relative;
+    height: 200vh;
+  }
+  .eq-stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+  }
+  .eq-in {
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    padding: calc(var(--d-ribbon-h) + var(--d-hdr-h) + clamp(16px, 4vh, 48px)) 0 clamp(28px, 6vh, 64px);
+    text-align: center;
+    justify-items: center;
+  }
+  .eq-in .d-h1 {
+    margin-top: 18px;
+    max-width: 14ch;
+  }
+  .eq-linhas {
+    --p: 0;
+    position: relative;
+    align-self: center;
+    display: grid;
+    gap: clamp(10px, 1.6vh, 18px);
+    width: min(720px, 90%);
+    margin: 20px 0;
+  }
+  .eq-linhas i {
+    display: block;
+    height: 1.5px;
+    width: calc(var(--w) + (64% - var(--w)) * var(--p));
+    margin-left: calc(50% - (var(--w) + (64% - var(--w)) * var(--p)) / 2 + var(--x) * (1 - var(--p)));
+    background: var(--d-fg);
+    transform: rotate(calc(var(--r) * (1 - var(--p))));
+    opacity: calc(0.35 + 0.65 * var(--p));
+  }
+  .eq-linhas i:nth-child(5) {
+    background: var(--d-accent);
+    height: 2.5px;
+  }
+  .eq-nivel {
+    position: absolute;
+    right: 0;
+    top: -26px;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--d-accent);
+  }
+  .eq-pe {
+    display: grid;
+    justify-items: center;
+  }
+  .eq-pe .d-hero__txt {
+    margin: 0 auto;
+    color: var(--d-muted);
+    opacity: 1;
+  }
+  .eq-pe .d-hero__ctas {
+    justify-content: center;
+  }
+  @media (max-width: 720px) {
+    .eq-hero {
+      height: 170vh;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduced } from '../../scripts/demo/base';
+
+  const hero = document.querySelector<HTMLElement>('[data-eq]')!;
+  const linhas = hero.querySelector<HTMLElement>('.eq-linhas')!;
+  const nivel = hero.querySelector<HTMLElement>('[data-eq-nivel]')!;
+  const marcar = (p: number) => {
+    linhas.style.setProperty('--p', p.toFixed(3));
+    nivel.textContent = p > 0.97 ? 'no eixo' : `${Math.round((1 - p) * 8)}° fora do eixo`;
+  };
+  if (reduced) marcar(1);
+  else {
+    // As linhas se alinham durante a rolagem do hero.
+    ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.8, onUpdate: (st) => marcar(gsap.parseEase('power2.out')(st.progress)) });
+    marcar(0);
+  }
+  // Os fios dos títulos se desenham ao entrar na tela.
+  const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add('is-on'), io.unobserve(e.target))), { rootMargin: '0px 0px -15% 0px' });
+  document.querySelectorAll('.demo--equilibrio .d-head').forEach((el) => io.observe(el));
+</script>

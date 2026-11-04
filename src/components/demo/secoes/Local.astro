@@ -1,0 +1,21 @@
+---
+import type { Demo } from '../../../data/demos/tipos';
+const { demo } = Astro.props as { demo: Demo };
+const l = demo.local;
+---
+<section class="d-sec d-loc" id="local">
+  <div class="d-wrap d-loc__grid d-grid">
+    <div class="d-card d-loc__info" data-r>
+      <p class="d-eyebrow">{l.atendeEm ? 'Onde eu atendo' : 'Como chegar'}</p>
+      <h2 class="d-h2">{l.titulo ?? 'Venha conhecer.'}</h2>
+      <p class="d-loc__end">{l.endereco}<span>{l.bairro}</span></p>
+      {l.atendeEm && <p class="d-loc__atende">{l.atendeEm}</p>}
+      <ul class="d-loc__hor">{l.horario.map((h) => <li><span>{h.dias}</span><strong>{h.horas}</strong></li>)}</ul>
+      <div class="d-loc__acoes">
+        <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+        <button type="button" class="d-btn d-btn--ghost" data-demo-cta data-tipo="rota">Traçar rota</button>
+      </div>
+    </div>
+    <div class="d-map" data-r aria-label="Mapa ilustrativo"><span class="d-map__pin"><i></i><span>{demo.academia}</span></span></div>
+  </div>
+</section>

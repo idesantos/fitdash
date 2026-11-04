@@ -1,0 +1,212 @@
+---
+// Modelo Premium: fotos grandes que se revelam como cortinas.
+import '@fontsource-variable/fraunces/standard.css';
+import '@fontsource-variable/fraunces/standard-italic.css';
+import { Image } from 'astro:assets';
+import DemoPage from '../../components/demo/DemoPage.astro';
+import demo from '../../data/demos/premium';
+const h = demo.hero;
+---
+<DemoPage demo={demo} tema="premium">
+  <section class="pr-hero" slot="hero">
+    <div class="d-wrap pr-in">
+      <div class="pr-txt">
+        <p class="d-eyebrow">{h.eyebrow}</p>
+        <h1 class="d-h1">Seu treino, <em>no seu tempo.</em></h1>
+        <p class="d-hero__txt">{h.texto}</p>
+        <div class="d-hero__ctas">
+          <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+          <a class="d-btn d-btn--ghost" href={h.ctaSec!.href}>{h.ctaSec!.label}</a>
+        </div>
+      </div>
+      <div class="pr-imgs">
+        <div class="pr-img pr-img--a" data-cortina-hero><Image src={h.foto!} alt="Salão do Atelier Fit" widths={[600, 900, 1200]} sizes="(min-width: 900px) 46vw, 90vw" loading="eager" /></div>
+        <div class="pr-img pr-img--b" data-cortina-hero><Image src={h.fotos![0]} alt="" widths={[400, 600]} sizes="(min-width: 900px) 18vw, 40vw" loading="eager" /></div>
+        <p class="pr-num" aria-hidden="true">Nº 30<span>alunos por horário, no máximo</span></p>
+      </div>
+    </div>
+  </section>
+</DemoPage>
+
+<style is:global>
+  .demo.demo--premium {
+    --d-bg: #f4f0e8;
+    --d-bg-2: #ebe5d8;
+    --d-surface: #fbf9f4;
+    --d-fg: #161412;
+    --d-muted: #6d665c;
+    --d-line: rgb(22 20 18 / 12%);
+    --d-accent: #a8804a;
+    --d-accent-fg: #fff;
+    --d-hdr-bg: rgb(244 240 232 / 88%);
+    --d-hdr-fg: #161412;
+    --d-hero-fg: #161412;
+    --d-display: 'Fraunces Variable', Georgia, serif;
+    --d-dw: 360;
+    --d-dls: -0.03em;
+    --d-dlh: 1;
+    --d-r: 2px;
+    --d-btn-r: 0;
+    --d-h1: clamp(52px, 7.4vw, 120px);
+    --d-h2: clamp(38px, 5vw, 76px);
+    --d-shadow: none;
+    --d-card-border: inset 0 0 0 1px rgb(22 20 18 / 10%);
+  }
+  .demo--premium .d-btn {
+    min-height: 50px;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    background: var(--d-fg);
+    color: var(--d-bg);
+  }
+  .demo--premium .d-btn--ghost {
+    background: transparent;
+    color: var(--d-fg);
+    box-shadow: inset 0 0 0 1px var(--d-fg);
+  }
+  .demo--premium .d-h2 em,
+  .demo--premium .d-h1 em {
+    font-style: italic;
+    color: var(--d-accent);
+  }
+  .demo--premium .d-eyebrow {
+    color: var(--d-fg);
+    letter-spacing: 0.24em;
+  }
+  .demo--premium .d-eyebrow::before {
+    content: '';
+    width: 36px;
+    height: 1px;
+    background: var(--d-accent);
+  }
+  .demo--premium .d-mod__body {
+    padding: 22px 4px 8px;
+  }
+  .demo--premium .d-mod__item {
+    background: transparent;
+    box-shadow: none;
+  }
+  .demo--premium .d-mod__img {
+    aspect-ratio: 3 / 4;
+  }
+  .demo--premium .d-gal__item {
+    border-radius: 0;
+  }
+  .demo--premium .d-pla__item.is-destaque {
+    background: var(--d-fg);
+    color: var(--d-bg);
+  }
+  .demo--premium .d-pla__item.is-destaque .d-btn {
+    background: var(--d-accent);
+    color: #fff;
+  }
+  .demo--premium .d-pla__selo {
+    border-radius: 0;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .demo--premium .d-dep__item blockquote {
+    font-family: var(--d-display);
+    font-size: 21px;
+    font-weight: 380;
+    line-height: 1.4;
+  }
+  .demo--premium .d-dep__stars {
+    color: var(--d-accent);
+  }
+  .demo--premium .d-cta__box {
+    background: var(--d-fg);
+    color: var(--d-bg);
+  }
+  .demo--premium .d-cta__box .d-btn {
+    background: var(--d-accent);
+    color: #fff;
+  }
+  .demo--premium .d-map {
+    filter: sepia(0.35);
+  }
+
+  /* Hero editorial */
+  .pr-hero {
+    padding: calc(var(--d-ribbon-h) + var(--d-hdr-h) + clamp(20px, 5vh, 60px)) 0 clamp(40px, 8vh, 90px);
+  }
+  .pr-in {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 5vw, 80px);
+    align-items: center;
+  }
+  .pr-txt .d-h1 {
+    margin-top: 22px;
+  }
+  .pr-txt .d-hero__txt {
+    color: var(--d-muted);
+    opacity: 1;
+  }
+  .pr-imgs {
+    position: relative;
+    padding-bottom: 12%;
+  }
+  .pr-img {
+    overflow: hidden;
+  }
+  .pr-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .pr-img--a {
+    aspect-ratio: 4 / 5;
+    width: 86%;
+    margin-left: auto;
+  }
+  .pr-img--b {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40%;
+    aspect-ratio: 3 / 4;
+    box-shadow: 0 0 0 10px var(--d-bg);
+  }
+  .pr-num {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    font: 360 clamp(40px, 4vw, 60px) / 1 var(--d-display);
+    color: var(--d-accent);
+    text-align: right;
+  }
+  .pr-num span {
+    margin-top: 6px;
+    font: 600 12px/1.3 var(--d-font);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--d-muted);
+  }
+  @media (max-width: 860px) {
+    .pr-in {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, reduced } from '../../scripts/demo/base';
+
+  if (!reduced) {
+    // Hero: as fotos sobem como cortinas ao abrir a página.
+    gsap.fromTo('[data-cortina-hero]', { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.6, ease: 'expo.inOut', stagger: 0.25, delay: 0.2 });
+    gsap.fromTo('[data-cortina-hero] img', { scale: 1.25 }, { scale: 1, duration: 2.2, ease: 'expo.out', stagger: 0.25, delay: 0.2 });
+
+    // Demais fotos: a cortina abre quando a foto entra na tela.
+    document.querySelectorAll<HTMLElement>('.demo--premium [data-curtain]').forEach((el) => {
+      el.removeAttribute('data-r');
+      gsap.set(el, { opacity: 1, y: 0 });
+      gsap.fromTo(el, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'expo.inOut', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+      const img = el.querySelector('img');
+      if (img) gsap.fromTo(img, { scale: 1.2 }, { scale: 1, duration: 2, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+    });
+  }
+</script>

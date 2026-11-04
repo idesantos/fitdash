@@ -1,0 +1,488 @@
+---
+// Miniatura de cada modelo: o print da primeira tela da demo (src/assets/thumbs/<slug>.jpg).
+// Sem print, cai num "mini site" em CSS com o efeito característico do estilo.
+import { Image } from 'astro:assets';
+import type { Modelo } from '../data/modelos';
+
+type Props = { modelo: Modelo; pequeno?: boolean };
+const { modelo: m, pequeno = false } = Astro.props;
+const t = m.thumb;
+const prints = import.meta.glob<ImageMetadata>('../assets/thumbs/*.jpg', { eager: true, import: 'default' });
+const print = prints[`../assets/thumbs/${m.slug}.jpg`];
+---
+<div class:list={['mt', `mt--${m.slug}`, `mt--f-${t.fonte}`, { 'mt--sm': pequeno }]} style={`--bg:${t.bg};--fg:${t.fg};--ac:${t.ac}`} aria-hidden="true">
+  {print ? (
+    <Image class="mt__print" src={print} alt="" widths={pequeno ? [320, 480] : [480, 720, 960]} sizes={pequeno ? '240px' : '(min-width: 900px) 380px, 90vw'} />
+  ) : (
+    <>
+      <div class="mt__fx"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="mt__nav"><span class="mt__logo">{t.academia}</span><span class="mt__links"><b></b><b></b><b></b></span><span class="mt__navcta"></span></div>
+      <div class="mt__hero">
+        <p class="mt__h">{t.titulo}</p>
+        <span class="mt__btn">{t.cta}</span>
+      </div>
+    </>
+  )}
+</div>
+
+<style>
+  .mt {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--fg);
+    container-type: inline-size;
+    isolation: isolate;
+  }
+  .mt__print {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  .mt__nav {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 4cqw;
+    padding: 4.5cqw 6cqw 0;
+  }
+  .mt__logo {
+    font: 800 4.2cqw/1 var(--mt-font, var(--f-display));
+    letter-spacing: var(--mt-ls, 0);
+    white-space: nowrap;
+  }
+  .mt__links {
+    display: flex;
+    gap: 2.5cqw;
+    margin-left: auto;
+  }
+  .mt__links b {
+    width: 7cqw;
+    height: 1.2cqw;
+    border-radius: 1cqw;
+    background: currentColor;
+    opacity: 0.35;
+  }
+  .mt__navcta {
+    width: 11cqw;
+    height: 4.2cqw;
+    border-radius: var(--mt-r, 1cqw);
+    background: var(--ac);
+  }
+  .mt__hero {
+    position: relative;
+    z-index: 2;
+    padding: 9cqw 6cqw 0;
+    max-width: 66cqw;
+  }
+  .mt__h {
+    font: var(--mt-w, 800) var(--mt-size, 7.6cqw) / 0.98 var(--mt-font, var(--f-display));
+    font-style: var(--mt-style, normal);
+    font-stretch: var(--mt-stretch, 100%);
+    letter-spacing: var(--mt-ls-h, -0.02em);
+    text-transform: var(--mt-tt, none);
+    text-wrap: balance;
+  }
+  .mt__btn {
+    display: inline-block;
+    margin-top: 5cqw;
+    padding: 2.4cqw 4cqw;
+    border-radius: var(--mt-r, 1cqw);
+    background: var(--ac);
+    color: var(--mt-btn-fg, #fff);
+    font: 700 3cqw/1 var(--f-body);
+  }
+  .mt__fx {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .mt__fx i {
+    position: absolute;
+    display: block;
+  }
+
+  /* ---------- Fontes ---------- */
+  .mt--f-condensada {
+    --mt-stretch: 70%;
+    --mt-w: 900;
+    --mt-tt: uppercase;
+    --mt-size: 7.6cqw;
+    --mt-ls-h: -0.01em;
+  }
+  .mt--f-expandida {
+    --mt-stretch: 125%;
+    --mt-w: 800;
+    --mt-size: 6.6cqw;
+  }
+  .mt--f-serifa {
+    --mt-font: ui-serif, Georgia, 'Times New Roman', serif;
+    --mt-w: 400;
+    --mt-size: 8cqw;
+    --mt-ls-h: -0.02em;
+    --mt-r: 0;
+  }
+  .mt--f-mono {
+    --mt-font: ui-monospace, 'SF Mono', Menlo, monospace;
+    --mt-w: 700;
+    --mt-size: 6.2cqw;
+    --mt-tt: uppercase;
+    --mt-ls-h: 0;
+    --mt-r: 0;
+  }
+  .mt--f-redonda {
+    --mt-font: var(--f-body);
+    --mt-w: 800;
+    --mt-r: 99px;
+    --mt-ls-h: -0.04em;
+  }
+  .mt--f-fina {
+    --mt-font: var(--f-body);
+    --mt-w: 300;
+    --mt-size: 7.4cqw;
+    --mt-r: 99px;
+    --mt-ls-h: -0.04em;
+  }
+
+  /* ---------- Efeitos por modelo ---------- */
+  /* Ferro: barra com anilhas */
+  .mt--ferro .mt__fx i:nth-child(1) {
+    right: 6cqw;
+    bottom: 12cqw;
+    width: 40cqw;
+    height: 1.6cqw;
+    background: #8b8f97;
+    border-radius: 1cqw;
+  }
+  .mt--ferro .mt__fx i:nth-child(2),
+  .mt--ferro .mt__fx i:nth-child(3) {
+    bottom: 3cqw;
+    width: 4.5cqw;
+    height: 19cqw;
+    border-radius: 1cqw;
+    background: var(--ac);
+    animation: mt-anilha 3.2s var(--ease-out) infinite;
+  }
+  .mt--ferro .mt__fx i:nth-child(2) {
+    right: 38cqw;
+  }
+  .mt--ferro .mt__fx i:nth-child(3) {
+    right: 8cqw;
+    animation-delay: 0.2s;
+  }
+  .mt--ferro .mt__fx i:nth-child(4) {
+    inset: 0;
+    background: radial-gradient(60% 70% at 85% 30%, rgb(255 59 31 / 18%), transparent 70%);
+  }
+  @keyframes mt-anilha {
+    0%, 12% { transform: translateX(14cqw); opacity: 0; }
+    40%, 100% { transform: none; opacity: 1; }
+  }
+  /* Neon: letreiro acendendo */
+  .mt--neon .mt__h {
+    color: var(--ac);
+    text-shadow: 0 0 2cqw rgb(198 255 0 / 70%), 0 0 6cqw rgb(198 255 0 / 40%);
+    animation: mt-neon 4s steps(1) infinite;
+  }
+  .mt--neon .mt__fx i:nth-child(1) {
+    inset: 0;
+    background:
+      radial-gradient(40% 60% at 90% 80%, rgb(255 43 214 / 35%), transparent 70%),
+      radial-gradient(40% 50% at 70% 10%, rgb(198 255 0 / 14%), transparent 70%);
+  }
+  .mt--neon .mt__fx i:nth-child(2) {
+    right: 8cqw;
+    top: 26cqw;
+    width: 22cqw;
+    height: 22cqw;
+    border-radius: 50%;
+    border: 0.8cqw solid #ff2bd6;
+    box-shadow: 0 0 3cqw #ff2bd6, inset 0 0 3cqw #ff2bd6;
+  }
+  .mt--neon .mt__btn {
+    --mt-btn-fg: #0a0618;
+  }
+  @keyframes mt-neon {
+    0%, 6%, 9%, 100% { opacity: 1; }
+    7%, 8% { opacity: 0.35; }
+  }
+  /* Premium: foto em cortina */
+  .mt--premium .mt__fx i:nth-child(1) {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 38cqw;
+    background: linear-gradient(160deg, #cdbfa8, #8d7b62 60%, #4b4237);
+    animation: mt-cortina 3.6s var(--ease-out) infinite alternate;
+  }
+  .mt--premium .mt__fx i:nth-child(2) {
+    right: 42cqw;
+    top: 30cqw;
+    width: 0.3cqw;
+    height: 26cqw;
+    background: var(--ac);
+  }
+  @keyframes mt-cortina {
+    from { clip-path: inset(0 0 100% 0); }
+    40%, to { clip-path: inset(0 0 0 0); }
+  }
+  /* Raia: faixas da piscina */
+  .mt--raia .mt__fx i:nth-child(1) {
+    inset: auto 0 0 0;
+    height: 44%;
+    background:
+      repeating-linear-gradient(90deg, #ff4d4d 0 3cqw, #fff 3cqw 6cqw) 0 30% / 200% 1.2cqw no-repeat,
+      repeating-linear-gradient(90deg, #ff4d4d 0 3cqw, #fff 3cqw 6cqw) 0 75% / 200% 1.2cqw no-repeat,
+      linear-gradient(#58c6ee, #1d8fd0);
+    animation: mt-raia 6s linear infinite;
+  }
+  @keyframes mt-raia {
+    to { background-position: -12cqw 30%, -12cqw 75%, 0 0; }
+  }
+  /* Família: bolhas */
+  .mt--familia .mt__fx i {
+    bottom: -10cqw;
+    border-radius: 50%;
+    background: var(--ac);
+    opacity: 0.85;
+    animation: mt-bolha 5s ease-in infinite;
+  }
+  .mt--familia .mt__fx i:nth-child(1) { right: 10cqw; width: 12cqw; height: 12cqw; }
+  .mt--familia .mt__fx i:nth-child(2) { right: 26cqw; width: 7cqw; height: 7cqw; background: #4cc9f0; animation-delay: 1.2s; }
+  .mt--familia .mt__fx i:nth-child(3) { right: 4cqw; width: 5cqw; height: 5cqw; background: #f72585; animation-delay: 2.4s; }
+  .mt--familia .mt__fx i:nth-child(4) { right: 18cqw; width: 9cqw; height: 9cqw; background: #80ed99; animation-delay: 3.3s; }
+  @keyframes mt-bolha {
+    from { transform: translateY(0); }
+    to { transform: translateY(-70cqw); opacity: 0; }
+  }
+  /* WOD: cronômetro */
+  .mt--wod .mt__fx i:nth-child(1) {
+    right: 6cqw;
+    bottom: 8cqw;
+    padding: 2cqw 3cqw;
+    border: 0.5cqw solid var(--ac);
+    color: var(--ac);
+    font: 700 7.5cqw/1 ui-monospace, Menlo, monospace;
+  }
+  .mt--wod .mt__fx i:nth-child(1)::before {
+    content: '12:00';
+    animation: mt-relogio 4s steps(1) infinite;
+  }
+  .mt--wod .mt__fx i:nth-child(2) {
+    inset: 0;
+    background: repeating-linear-gradient(0deg, rgb(255 255 255 / 3%) 0 1px, transparent 1px 6cqw);
+  }
+  .mt--wod .mt__btn {
+    --mt-btn-fg: #141414;
+  }
+  @keyframes mt-relogio {
+    0% { content: '12:00'; }
+    25% { content: '11:59'; }
+    50% { content: '11:58'; }
+    75% { content: '11:57'; }
+  }
+  /* Box: chapas de metal */
+  .mt--box .mt__fx i:nth-child(1) {
+    inset: auto 0 0 0;
+    height: 14cqw;
+    background: repeating-linear-gradient(-45deg, var(--ac) 0 3cqw, #1a1a1a 3cqw 6cqw);
+  }
+  .mt--box .mt__fx i:nth-child(2) {
+    right: 6cqw;
+    top: 22cqw;
+    width: 28cqw;
+    height: 22cqw;
+    background: linear-gradient(135deg, #6b6b6b, #3a3a3a 50%, #555);
+    box-shadow: inset 0 0 0 0.6cqw #777;
+    animation: mt-chapa 3s var(--ease-out) infinite;
+  }
+  @keyframes mt-chapa {
+    0%, 10% { transform: translateY(-40cqw); }
+    45%, 100% { transform: none; }
+  }
+  /* Comunidade: mosaico */
+  .mt--comunidade .mt__fx {
+    left: auto;
+    width: 40cqw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.4cqw;
+    padding: 14cqw 5cqw 5cqw 0;
+  }
+  .mt--comunidade .mt__fx i {
+    position: static;
+    border-radius: 1cqw;
+    background: linear-gradient(140deg, #d9d9d9, #a3a3a3);
+    animation: mt-mosaico 4s ease-in-out infinite;
+  }
+  .mt--comunidade .mt__fx i:nth-child(2) { background: linear-gradient(140deg, #e63946, #a4161a); animation-delay: 0.4s; }
+  .mt--comunidade .mt__fx i:nth-child(3) { background: linear-gradient(140deg, #bdbdbd, #7d7d7d); animation-delay: 0.8s; }
+  .mt--comunidade .mt__fx i:nth-child(4) { animation-delay: 1.2s; }
+  .mt--comunidade .mt__fx i:nth-child(5) { background: linear-gradient(140deg, #222, #555); animation-delay: 1.6s; }
+  .mt--comunidade .mt__fx i:nth-child(6) { background: linear-gradient(140deg, #e63946, #ff8fa3); animation-delay: 2s; }
+  .mt--comunidade .mt__hero {
+    max-width: 56cqw;
+  }
+  @keyframes mt-mosaico {
+    0%, 100% { transform: none; }
+    50% { transform: scale(0.92); }
+  }
+  /* Respira: forma que expande e contrai */
+  .mt--respira .mt__fx i:nth-child(1) {
+    right: 4cqw;
+    top: 16cqw;
+    width: 34cqw;
+    height: 34cqw;
+    border-radius: 46% 54% 52% 48% / 55% 45% 55% 45%;
+    background: radial-gradient(circle at 35% 35%, #b9d6c1, var(--ac));
+    animation: mt-respira 5s ease-in-out infinite;
+  }
+  .mt--respira .mt__fx i:nth-child(2) {
+    right: 0;
+    top: 10cqw;
+    width: 46cqw;
+    height: 46cqw;
+    border-radius: 50%;
+    border: 0.3cqw solid var(--ac);
+    opacity: 0.4;
+    animation: mt-respira 5s ease-in-out infinite 0.4s;
+  }
+  @keyframes mt-respira {
+    0%, 100% { transform: scale(0.86); }
+    50% { transform: scale(1.04); }
+  }
+  /* Studio: página de revista */
+  .mt--studio .mt__fx i:nth-child(1) {
+    right: 6cqw;
+    top: 14cqw;
+    width: 30cqw;
+    height: 44cqw;
+    background: linear-gradient(170deg, #e7cdb8, #b07a5f 70%, #6e4a39);
+    animation: mt-pagina 4.4s var(--ease-out) infinite;
+  }
+  .mt--studio .mt__fx i:nth-child(2) {
+    right: 40cqw;
+    top: 52cqw;
+    width: 16cqw;
+    height: 0.3cqw;
+    background: var(--fg);
+  }
+  @keyframes mt-pagina {
+    0%, 8% { transform: translateX(40cqw); }
+    45%, 100% { transform: none; }
+  }
+  /* Equilíbrio: linhas alinhando */
+  .mt--equilibrio .mt__fx i {
+    right: 6cqw;
+    height: 0.3cqw;
+    background: var(--ac);
+    animation: mt-linha 4s var(--ease-out) infinite alternate;
+  }
+  .mt--equilibrio .mt__fx i:nth-child(1) { top: 24cqw; width: 26cqw; }
+  .mt--equilibrio .mt__fx i:nth-child(2) { top: 31cqw; width: 26cqw; animation-delay: 0.2s; }
+  .mt--equilibrio .mt__fx i:nth-child(3) { top: 38cqw; width: 26cqw; animation-delay: 0.4s; }
+  .mt--equilibrio .mt__fx i:nth-child(4) { top: 45cqw; width: 26cqw; animation-delay: 0.6s; }
+  @keyframes mt-linha {
+    from { transform: translateX(-12cqw) scaleX(0.4); opacity: 0.3; }
+    to { transform: none; opacity: 1; }
+  }
+  /* Autoridade: nome gigante atrás do recorte */
+  .mt--autoridade .mt__fx i:nth-child(1) {
+    right: -4cqw;
+    bottom: -2cqw;
+    font: 900 26cqw/0.8 var(--f-display);
+    font-stretch: 70%;
+    color: var(--ac);
+    opacity: 0.9;
+  }
+  .mt--autoridade .mt__fx i:nth-child(1)::before {
+    content: 'RAFA';
+  }
+  .mt--autoridade .mt__fx i:nth-child(2) {
+    right: 10cqw;
+    bottom: 0;
+    width: 22cqw;
+    height: 40cqw;
+    border-radius: 11cqw 11cqw 0 0;
+    background: linear-gradient(180deg, #3a3f4a, #1b1e24);
+  }
+  .mt--autoridade .mt__btn {
+    --mt-btn-fg: #101216;
+  }
+  /* Resultados: antes/depois de aluno */
+  .mt--resultados .mt__fx i:nth-child(1),
+  .mt--resultados .mt__fx i:nth-child(2) {
+    top: 18cqw;
+    width: 16cqw;
+    height: 30cqw;
+    border-radius: 1.4cqw;
+  }
+  .mt--resultados .mt__fx i:nth-child(1) {
+    right: 23cqw;
+    background: linear-gradient(170deg, #c9cfd6, #8c96a1);
+  }
+  .mt--resultados .mt__fx i:nth-child(2) {
+    right: 6cqw;
+    background: linear-gradient(170deg, #4ad19c, var(--ac));
+  }
+  .mt--resultados .mt__fx i:nth-child(3) {
+    right: 21.4cqw;
+    top: 15cqw;
+    width: 0.4cqw;
+    height: 36cqw;
+    background: var(--fg);
+    animation: mt-res 3s ease-in-out infinite alternate;
+  }
+  @keyframes mt-res {
+    from { transform: translateX(-6cqw); }
+    to { transform: translateX(6cqw); }
+  }
+  /* Agenda: semana se montando */
+  .mt--agenda .mt__fx {
+    left: auto;
+    width: 38cqw;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2cqw;
+    padding: 16cqw 5cqw 6cqw 0;
+  }
+  .mt--agenda .mt__fx i {
+    position: static;
+    border-radius: 1cqw;
+    background: #eef1f6;
+    animation: mt-slot 3.4s var(--ease-out) infinite;
+  }
+  .mt--agenda .mt__fx i:nth-child(2),
+  .mt--agenda .mt__fx i:nth-child(6) {
+    background: var(--ac);
+  }
+  .mt--agenda .mt__fx i:nth-child(2) { animation-delay: 0.15s; }
+  .mt--agenda .mt__fx i:nth-child(3) { animation-delay: 0.3s; }
+  .mt--agenda .mt__fx i:nth-child(4) { animation-delay: 0.45s; }
+  .mt--agenda .mt__fx i:nth-child(5) { animation-delay: 0.6s; }
+  .mt--agenda .mt__fx i:nth-child(6) { animation-delay: 0.75s; }
+  .mt--agenda .mt__hero {
+    max-width: 58cqw;
+  }
+  @keyframes mt-slot {
+    0%, 8% { transform: scale(0.4); opacity: 0; }
+    35%, 100% { transform: none; opacity: 1; }
+  }
+
+  .mt--sm .mt__fx i,
+  .mt--sm .mt__h {
+    animation: none !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mt__fx i,
+    .mt__h {
+      animation: none !important;
+    }
+  }
+</style>

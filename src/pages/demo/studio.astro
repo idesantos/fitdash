@@ -1,0 +1,279 @@
+---
+// Modelo Studio: editorial, como revista. As fotos do dia no studio passam como páginas.
+import '@fontsource-variable/fraunces/standard.css';
+import '@fontsource-variable/fraunces/standard-italic.css';
+import { Image } from 'astro:assets';
+import DemoPage from '../../components/demo/DemoPage.astro';
+import demo from '../../data/demos/studio';
+const h = demo.hero;
+---
+<DemoPage demo={demo} tema="studio">
+  <section class="st-hero" slot="hero">
+    <div class="d-wrap st-in">
+      <div class="st-meta" aria-hidden="true"><span>Nº 01</span><span>Pilates em aparelhos</span><span>Edição de novembro</span></div>
+      <h1 class="st-title"><span>Postura</span> <em>que muda</em> <span>o dia.</span></h1>
+      <div class="st-img st-img--a"><Image src={h.foto!} alt="Aluna no Reformer" widths={[600, 900, 1200]} sizes="(min-width: 900px) 42vw, 90vw" loading="eager" /></div>
+      <div class="st-img st-img--b"><Image src={h.fotos![0]} alt="" widths={[400, 700]} sizes="(min-width: 900px) 22vw, 50vw" loading="eager" /></div>
+      <div class="st-txt">
+        <p class="d-eyebrow">{h.eyebrow}</p>
+        <p class="d-hero__txt">{h.texto}</p>
+        <div class="d-hero__ctas">
+          <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+          <a class="d-btn d-btn--ghost" href={h.ctaSec!.href}>{h.ctaSec!.label}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</DemoPage>
+
+<style is:global>
+  .demo.demo--studio {
+    --d-bg: #f6efe7;
+    --d-bg-2: #efe4d6;
+    --d-surface: #fbf7f2;
+    --d-fg: #2a2420;
+    --d-muted: #74675c;
+    --d-line: rgb(42 36 32 / 14%);
+    --d-accent: #c0785a;
+    --d-accent-fg: #ffffff;
+    --d-hdr-bg: rgb(246 239 231 / 90%);
+    --d-hdr-fg: #2a2420;
+    --d-hero-fg: #2a2420;
+    --d-display: 'Fraunces Variable', Georgia, serif;
+    --d-dw: 400;
+    --d-ds: italic;
+    --d-dls: -0.03em;
+    --d-dlh: 1;
+    --d-r: 0;
+    --d-btn-r: 999px;
+    --d-h2: clamp(38px, 5vw, 76px);
+    --d-shadow: none;
+    --d-card-border: inset 0 0 0 1px rgb(42 36 32 / 12%);
+  }
+  .demo--studio .d-logo {
+    font-style: italic;
+    font-weight: 500;
+  }
+  .demo--studio .d-btn {
+    background: var(--d-fg);
+    color: var(--d-bg);
+    font-weight: 600;
+  }
+  .demo--studio .d-btn--ghost {
+    background: transparent;
+    color: var(--d-fg);
+    box-shadow: inset 0 0 0 1px var(--d-fg);
+  }
+  .demo--studio .d-eyebrow {
+    color: var(--d-accent);
+    letter-spacing: 0.2em;
+  }
+  /* Capitular no texto da casa */
+  .demo--studio .d-sobre__txt > p:first-of-type::first-letter {
+    float: left;
+    margin: 6px 12px 0 0;
+    font-family: var(--d-display);
+    font-size: 88px;
+    font-style: italic;
+    line-height: 0.8;
+    color: var(--d-accent);
+  }
+  .demo--studio .d-sobre__txt > p {
+    columns: 1;
+  }
+  .demo--studio .d-mod__item {
+    background: transparent;
+    box-shadow: none;
+  }
+  .demo--studio .d-mod__body {
+    padding: 18px 0 0;
+    border-top: 1px solid var(--d-fg);
+    margin-top: 14px;
+  }
+  .demo--studio .d-pla__item.is-destaque {
+    background: var(--d-accent);
+    color: #fff;
+  }
+  .demo--studio .d-pla__item.is-destaque li::before {
+    color: #fff;
+  }
+  .demo--studio .d-dep__item blockquote {
+    font-family: var(--d-display);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.35;
+  }
+  .demo--studio .d-cta__box {
+    background: var(--d-fg);
+    color: var(--d-bg);
+  }
+  .demo--studio .d-cta__box .d-btn {
+    background: var(--d-accent);
+    color: #fff;
+  }
+
+  /* Galeria vira páginas de revista que correm na horizontal */
+  .demo--studio .d-gal {
+    overflow: hidden;
+  }
+  .demo--studio .d-gal__grid {
+    display: flex;
+    gap: 28px;
+    width: max-content;
+    grid-auto-rows: auto;
+  }
+  .demo--studio .d-gal__item,
+  .demo--studio .d-gal__item:nth-child(n) {
+    flex: none;
+    width: clamp(260px, 30vw, 420px);
+    height: clamp(340px, 42vw, 560px);
+    border-radius: 0;
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .demo--studio .d-gal__item figcaption {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 70px 18px 18px;
+    border-radius: 0;
+    background: linear-gradient(transparent, rgb(42 36 32 / 75%));
+    font-family: var(--d-display);
+    font-size: 24px;
+    font-style: italic;
+    font-weight: 400;
+  }
+  .demo--studio .d-gal__item:nth-child(even) {
+    margin-top: 60px;
+  }
+  @media (max-width: 860px) {
+    .demo--studio .d-gal .d-wrap {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 10px;
+    }
+    .demo--studio .d-gal__item {
+      scroll-snap-align: start;
+    }
+  }
+
+  /* Hero capa de revista */
+  .st-hero {
+    padding: calc(var(--d-ribbon-h) + var(--d-hdr-h) + 18px) 0 clamp(40px, 8vh, 90px);
+    overflow: hidden;
+  }
+  .st-in {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: 18px 20px;
+  }
+  .st-meta {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-block: 1px solid var(--d-fg);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .st-title {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    z-index: 2;
+    font-family: 'Fraunces Variable', Georgia, serif;
+    font-size: clamp(64px, min(11vw, 19vh), 200px);
+    font-weight: 300;
+    line-height: 0.86;
+    letter-spacing: -0.05em;
+    pointer-events: none;
+  }
+  .st-title span {
+    font-style: normal;
+  }
+  .st-title em {
+    color: var(--d-accent);
+  }
+  .st-img {
+    overflow: hidden;
+  }
+  .st-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .st-img--a {
+    grid-column: 7 / -1;
+    grid-row: 2 / 4;
+    aspect-ratio: 4 / 5;
+    margin-top: 7vw;
+  }
+  .st-img--b {
+    grid-column: 4 / 7;
+    grid-row: 3;
+    aspect-ratio: 3 / 4;
+    align-self: start;
+  }
+  .st-txt {
+    grid-column: 1 / 4;
+    grid-row: 3;
+    align-self: start;
+  }
+  .st-txt .d-hero__txt {
+    margin-top: 12px;
+    font-size: 17px;
+    color: var(--d-muted);
+    opacity: 1;
+  }
+  .st-txt .d-hero__ctas {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  @media (max-width: 860px) {
+    .st-in {
+      grid-template-columns: 1fr 1fr;
+    }
+    .st-meta span:last-child {
+      display: none;
+    }
+    .st-title {
+      grid-column: 1 / -1;
+    }
+    .st-img--a {
+      grid-column: 1 / -1;
+      grid-row: auto;
+      margin-top: 0;
+      aspect-ratio: 4 / 3;
+    }
+    .st-img--b {
+      display: none;
+    }
+    .st-txt {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, reduced } from '../../scripts/demo/base';
+
+  gsap.from('.st-title > *', { yPercent: 60, opacity: 0, duration: 1.4, ease: 'expo.out', stagger: 0.12, delay: 0.1 });
+
+  // No computador, a galeria fica presa e as páginas correm para o lado.
+  const mm = gsap.matchMedia();
+  mm.add('(min-width: 861px)', () => {
+    if (reduced) return;
+    const sec = document.querySelector<HTMLElement>('.demo--studio .d-gal');
+    const trilho = sec?.querySelector<HTMLElement>('.d-gal__grid');
+    if (!sec || !trilho) return;
+    const dist = () => Math.max(0, trilho.scrollWidth - sec.querySelector<HTMLElement>('.d-wrap')!.clientWidth);
+    gsap.to(trilho, {
+      x: () => -dist(),
+      ease: 'none',
+      scrollTrigger: { trigger: sec, start: 'top top', end: () => `+=${dist()}`, pin: true, scrub: 0.6, invalidateOnRefresh: true },
+    });
+  });
+</script>

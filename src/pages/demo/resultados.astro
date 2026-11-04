@@ -1,0 +1,190 @@
+---
+// Modelo Resultados: o comparador de antes e depois dos alunos é o centro do site.
+import '@fontsource-variable/archivo/standard.css';
+import { Image } from 'astro:assets';
+import DemoPage from '../../components/demo/DemoPage.astro';
+import demo from '../../data/demos/resultados';
+const h = demo.hero;
+---
+<DemoPage demo={demo} tema="resultados">
+  <section class="re-hero" slot="hero">
+    <div class="d-wrap re-in">
+      <div class="re-txt">
+        <p class="d-eyebrow">{h.eyebrow}</p>
+        <h1 class="d-h1"><span class="re-90">90 dias.</span> Sem atalho.</h1>
+        <p class="d-hero__txt">{h.texto}</p>
+        <div class="d-hero__ctas">
+          <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+          <a class="d-btn d-btn--ghost" href={h.ctaSec!.href}>{h.ctaSec!.label}</a>
+        </div>
+        <ul class="d-selos">{h.selos!.map((s) => <li>{s}</li>)}</ul>
+      </div>
+      <div class="re-vis">
+        <div class="d-cmp re-cmp" data-cmp style="--p:50">
+          <Image class="d-cmp__a" src={h.foto!} alt="" widths={[500, 800, 1100]} sizes="(min-width: 900px) 40vw, 90vw" loading="eager" />
+          <div class="d-cmp__b"><Image src={h.foto!} alt="Aluna do Projeto 90" widths={[500, 800, 1100]} sizes="(min-width: 900px) 40vw, 90vw" loading="eager" /></div>
+          <span class="d-cmp__line" aria-hidden="true"><i></i></span>
+          <span class="d-cmp__t d-cmp__t--a">Dia 1</span><span class="d-cmp__t d-cmp__t--b">Dia 90</span>
+          <input type="range" min="0" max="100" value="50" aria-label="Comparar dia 1 e dia 90" />
+        </div>
+        <span class="re-chip re-chip--1">−8 kg</span>
+        <span class="re-chip re-chip--2">+12% de força</span>
+        <span class="re-chip re-chip--3">−9 cm de cintura</span>
+        <p class="re-nota">Foto ilustrativa</p>
+      </div>
+    </div>
+  </section>
+</DemoPage>
+
+<style is:global>
+  .demo.demo--resultados {
+    --d-bg: #f3f6f8;
+    --d-bg-2: #e7eef1;
+    --d-surface: #ffffff;
+    --d-fg: #0c1b2a;
+    --d-muted: #566676;
+    --d-line: rgb(12 27 42 / 10%);
+    --d-accent: #0aa06e;
+    --d-accent-fg: #ffffff;
+    --d-hdr-bg: rgb(243 246 248 / 90%);
+    --d-hdr-fg: #0c1b2a;
+    --d-hero-fg: #0c1b2a;
+    --d-display: 'Archivo Variable', system-ui, sans-serif;
+    --d-dw: 800;
+    --d-dstretch: 122%;
+    --d-dls: -0.045em;
+    --d-dlh: 0.95;
+    --d-r: 18px;
+    --d-h1: clamp(50px, 6.6vw, 108px);
+  }
+  .demo--resultados .d-num strong {
+    color: var(--d-fg);
+  }
+  .demo--resultados .d-num div:first-child strong {
+    color: var(--d-accent);
+  }
+  .demo--resultados .d-pas__item::before {
+    content: counter(passo);
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: var(--d-fg);
+    color: #fff;
+    font-size: 20px;
+  }
+  .demo--resultados .d-pla__item.is-destaque {
+    background: var(--d-fg);
+    color: #fff;
+  }
+  .demo--resultados .d-cta__box {
+    background: var(--d-fg);
+  }
+  .demo--resultados .d-cta__box .d-btn {
+    background: var(--d-accent);
+    color: #fff;
+  }
+
+  /* Hero */
+  .re-hero {
+    padding: calc(var(--d-ribbon-h) + var(--d-hdr-h) + clamp(20px, 5vh, 60px)) 0 clamp(40px, 8vh, 90px);
+  }
+  .re-in {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(32px, 5vw, 80px);
+    align-items: center;
+  }
+  .re-txt .d-h1 {
+    margin-top: 18px;
+  }
+  .re-90 {
+    display: block;
+    color: var(--d-accent);
+  }
+  .re-txt .d-hero__txt {
+    color: var(--d-muted);
+    opacity: 1;
+  }
+  .re-vis {
+    position: relative;
+  }
+  .re-cmp {
+    border-radius: 24px;
+    box-shadow: 0 40px 80px -40px rgb(12 27 42 / 55%);
+  }
+  .re-chip {
+    position: absolute;
+    z-index: 2;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 14px 30px -12px rgb(12 27 42 / 40%);
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--d-fg);
+    animation: re-flutua 5s ease-in-out infinite;
+  }
+  .re-chip::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: var(--d-accent);
+    vertical-align: middle;
+  }
+  .re-chip--1 {
+    left: -6%;
+    top: 18%;
+  }
+  .re-chip--2 {
+    right: -5%;
+    top: 46%;
+    animation-delay: -1.6s;
+  }
+  .re-chip--3 {
+    left: 4%;
+    bottom: 10%;
+    animation-delay: -3.2s;
+  }
+  @keyframes re-flutua {
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  .re-nota {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--d-muted);
+    text-align: right;
+  }
+  @media (max-width: 860px) {
+    .re-in {
+      grid-template-columns: 1fr;
+    }
+    .re-chip--1 {
+      left: 0;
+    }
+    .re-chip--2 {
+      right: 0;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, reduced } from '../../scripts/demo/base';
+
+  // O comparador do hero se mexe sozinho uma vez, para mostrar que dá para arrastar.
+  const cmp = document.querySelector<HTMLElement>('.re-cmp');
+  if (cmp && !reduced) {
+    const st = { p: 50 };
+    gsap.timeline({ delay: 0.9 })
+      .to(st, { p: 85, duration: 0.9, ease: 'power2.inOut', onUpdate: () => cmp.style.setProperty('--p', String(st.p)) })
+      .to(st, { p: 22, duration: 1.1, ease: 'power2.inOut', onUpdate: () => cmp.style.setProperty('--p', String(st.p)) })
+      .to(st, { p: 50, duration: 0.8, ease: 'power2.out', onUpdate: () => cmp.style.setProperty('--p', String(st.p)) });
+    gsap.from('.re-chip', { scale: 0, opacity: 0, duration: 0.8, ease: 'back.out(2)', stagger: 0.15, delay: 0.6 });
+  }
+</script>

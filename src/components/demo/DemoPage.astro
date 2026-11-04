@@ -1,0 +1,87 @@
+---
+// Página de um site de academia (demo ou cliente). O hero e o efeito vêm do modelo;
+// as seções saem do esquema de dados na ordem de `demo.secoes`.
+import '../../styles/demo-base.css';
+import type { Demo } from '../../data/demos/tipos';
+import { modeloPorSlug } from '../../data/modelos';
+import { STAGING, url } from '../../lib/url';
+import Numeros from './secoes/Numeros.astro';
+import Sobre from './secoes/Sobre.astro';
+import Modalidades from './secoes/Modalidades.astro';
+import Galeria from './secoes/Galeria.astro';
+import Horarios from './secoes/Horarios.astro';
+import Planos from './secoes/Planos.astro';
+import Equipe from './secoes/Equipe.astro';
+import Depoimentos from './secoes/Depoimentos.astro';
+import Passos from './secoes/Passos.astro';
+import Wod from './secoes/Wod.astro';
+import Agenda from './secoes/Agenda.astro';
+import Resultados from './secoes/Resultados.astro';
+import Local from './secoes/Local.astro';
+import Cta from './secoes/Cta.astro';
+
+type Props = { demo: Demo; tema: string };
+const { demo, tema } = Astro.props;
+const modelo = modeloPorSlug(demo.slug)!;
+const C = { numeros: Numeros, sobre: Sobre, modalidades: Modalidades, galeria: Galeria, horarios: Horarios, planos: Planos, equipe: Equipe, depoimentos: Depoimentos, passos: Passos, wod: Wod, agenda: Agenda, resultados: Resultados, local: Local, cta: Cta };
+const titulo = `${demo.academia} · Demonstração do modelo ${modelo.nome} | FitDash`;
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{titulo}</title>
+    <meta name="description" content={`Demonstração do modelo ${modelo.nome} da FitDash: ${modelo.ideia}`} />
+    {STAGING ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="noindex" />}
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body class={`demo demo--${tema}`} style="margin:0">
+    <div class="d-ribbon" data-ribbon>
+      <span class="d-ribbon__fd"><i></i>FitDash</span>
+      <span>Demonstração do modelo <b>{modelo.nome}</b><span class="d-ribbon__extra"> · academia e dados fictícios</span></span>
+      <a href={url(`/comecar/?modelo=${demo.slug}`)}>Quero este modelo →</a>
+    </div>
+
+    <header class="d-hdr" data-dhdr>
+      <div class="d-wrap d-hdr__in">
+        <a href="#topo" class="d-logo">{demo.logo}</a>
+        <nav class="d-nav" aria-label="Principal">{demo.nav.map((n) => <a href={n.href}>{n.label}</a>)}</nav>
+        <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+      </div>
+    </header>
+
+    <main id="topo">
+      <slot name="hero" />
+      {demo.secoes.map((s, i) => {
+        const Comp = C[s];
+        return (
+          <>
+            {i > 0 && <div class="d-div" aria-hidden="true" data-div><i></i></div>}
+            <Comp demo={demo} />
+          </>
+        );
+      })}
+    </main>
+
+    <footer class="d-ftr">
+      <div class="d-wrap d-ftr__in">
+        <span class="d-logo">{demo.logo}</span>
+        <span>{demo.local.endereco} · {demo.local.bairro}</span>
+        <a class="d-ftr__fd" href={url('/#modelos')}>Site feito com <b>FitDash</b> · ver outros modelos</a>
+      </div>
+    </footer>
+
+    <nav class="d-mbar" aria-label="Ação rápida" data-dmbar>
+      <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+      <button type="button" class="d-btn d-btn--ghost" data-demo-cta data-tipo="rota">Rota</button>
+    </nav>
+
+    <div class="d-toast" role="status" aria-live="polite" data-toast></div>
+    <slot name="fim" />
+    <script>
+      import '../../scripts/demo/base';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+---
+import type { Demo } from '../../../data/demos/tipos';
+const { demo } = Astro.props as { demo: Demo };
+const p = demo.planos!;
+---
+<section class="d-sec d-sec--alt d-pla" id="planos">
+  <div class="d-wrap">
+    <div class="d-head">
+      {p.eyebrow && <p class="d-eyebrow" data-r>{p.eyebrow}</p>}
+      <h2 class="d-h2" data-r>{p.titulo}</h2>
+      {p.intro && <p class="d-lead" data-r>{p.intro}</p>}
+    </div>
+    <ul class="d-pla__grid d-grid">
+      {p.itens.map((i) => (
+        <li class:list={['d-card d-pla__item', { 'is-destaque': i.destaque }]} data-r>
+          {i.destaque && <span class="d-pla__selo">{i.destaque}</span>}
+          <h3 class="d-h3">{i.nome}</h3>
+          <p class="d-pla__preco">{i.preco}<small> {i.periodo}</small></p>
+          <ul>{i.itens.map((x) => <li>{x}</li>)}</ul>
+          <button type="button" class="d-btn" data-demo-cta data-msg={`Olá! Quero saber do plano ${i.nome} da ${demo.academia}.`}>Quero esse</button>
+        </li>
+      ))}
+    </ul>
+    {p.nota && <p class="d-pla__nota">{p.nota}</p>}
+  </div>
+</section>

@@ -1,0 +1,268 @@
+---
+import Icon from './Icon.astro';
+import { servicos, upsell, black, blackAtiva, brl, parcelasMax } from '../data/oferta';
+import { url } from '../lib/url';
+const ativa = blackAtiva();
+---
+<div class:list={['pr', { 'is-black': ativa }]} data-precos data-fim={black.fim}>
+  <div class="pr__black" data-black-only>
+    <span class="chip chip--green">{black.nome}</span>
+    <p>Preço de Black até 30/11. Termina em <strong data-countdown>…</strong></p>
+  </div>
+
+  <div class="pr__grid grid-safe">
+    {servicos.map((s) => (
+      <article class:list={['plan', { 'plan--dark': s.id === 'criacao' }]} data-reveal>
+        <p class="plan__para">{s.para}</p>
+        <h3 class="plan__nome">{s.nome}</h3>
+        <p class="plan__resumo">{s.resumo}</p>
+        <div class="plan__preco">
+          <p class="plan__de" data-black-only>de <s>{brl(s.preco)}</s> por</p>
+          <p class="plan__valor">
+            <span data-black-only>{brl(s.precoBlack)}</span>
+            <span data-normal-only>{brl(s.preco)}</span>
+          </p>
+          <p class="plan__parc">no Pix, ou em até {parcelasMax}x no cartão</p>
+        </div>
+        <p class="plan__depois"><Icon name="shield" /> Você só paga depois de ver o site pronto.</p>
+        <ul class="plan__itens">
+          {s.itens.map((i) => <li><Icon name="check" /> {i}</li>)}
+        </ul>
+        <a class:list={['btn', s.id === 'criacao' ? 'btn--green' : 'btn--ink']} href={url(`/comecar/?servico=${s.id}`)} data-track="escolheu_servico" data-track-label={s.id}><span>Quero {s.nome.toLowerCase()} <Icon name="arrow" /></span></a>
+      </article>
+    ))}
+  </div>
+
+  <article class="up" data-reveal>
+    <div class="up__head">
+      <span class="up__plus" aria-hidden="true">+</span>
+      <div>
+        <p class="plan__para">Adicional opcional</p>
+        <h3 class="plan__nome">{upsell.nome}</h3>
+        <p class="plan__resumo">{upsell.chamada}.</p>
+      </div>
+      <div class="up__preco">
+        <p class="plan__de" data-black-only>de <s>{brl(upsell.preco)}</s> por</p>
+        <p class="plan__valor plan__valor--sm">
+          <span data-black-only>+{brl(upsell.precoBlack)}</span>
+          <span data-normal-only>+{brl(upsell.preco)}</span>
+        </p>
+      </div>
+    </div>
+    <ul class="up__itens">
+      {upsell.itens.map((i) => <li><Icon name="check" /> {i}</li>)}
+    </ul>
+    <p class="up__aviso">{upsell.aviso} Você adiciona no fim do formulário.</p>
+  </article>
+</div>
+
+<style>
+  .pr:not(.is-black) [data-black-only],
+  .pr.is-black [data-normal-only] {
+    display: none !important;
+  }
+  .pr__black {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    margin-bottom: 28px;
+    font-size: 16px;
+    color: var(--c-ink-muted);
+  }
+  .pr__black strong {
+    color: var(--c-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .pr__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: stretch;
+  }
+  .plan {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: clamp(26px, 3vw, 40px);
+    border-radius: var(--r-lg);
+    background: #fff;
+    color: var(--c-ink);
+    box-shadow:
+      0 1px 2px rgb(11 15 23 / 6%),
+      0 20px 50px -30px rgb(11 15 23 / 35%);
+  }
+  .plan--dark {
+    background: radial-gradient(120% 90% at 100% 0%, rgb(36 141 207 / 35%), transparent 60%), var(--c-ink);
+    color: #fff;
+  }
+  .plan__para {
+    font: 700 13px/1 var(--f-body);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-blue);
+  }
+  .plan--dark .plan__para {
+    color: var(--c-green);
+  }
+  .plan__nome {
+    font-size: clamp(32px, 3.4vw, 46px);
+  }
+  .plan__resumo {
+    color: var(--c-ink-muted);
+  }
+  .plan--dark .plan__resumo,
+  .plan--dark .plan__parc,
+  .plan--dark .plan__de {
+    color: var(--c-muted);
+  }
+  .plan__preco {
+    margin-top: 6px;
+  }
+  .plan__de {
+    font-size: 15px;
+    color: var(--c-ink-muted);
+  }
+  .plan__valor {
+    font: 800 clamp(54px, 6vw, 78px) / 1 var(--f-display);
+    font-style: italic;
+    font-stretch: 112%;
+    letter-spacing: -0.04em;
+  }
+  .plan__valor--sm {
+    font-size: clamp(36px, 3.6vw, 48px);
+  }
+  .plan__parc {
+    margin-top: 6px;
+    font-size: 15px;
+    color: var(--c-ink-muted);
+  }
+  .plan__depois {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgb(17 244 178 / 14%);
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .plan:not(.plan--dark) .plan__depois {
+    background: #e3f8f1;
+    color: #05543d;
+  }
+  .plan__depois :global(svg) {
+    flex: none;
+    width: 20px;
+    height: 20px;
+  }
+  .plan__itens,
+  .up__itens {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    margin: 6px 0 10px;
+  }
+  .plan__itens li,
+  .up__itens li {
+    display: flex;
+    gap: 10px;
+    font-size: 15.5px;
+    line-height: 1.45;
+  }
+  .plan__itens :global(svg),
+  .up__itens :global(svg) {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    color: var(--c-blue);
+  }
+  .plan--dark .plan__itens :global(svg) {
+    color: var(--c-green);
+  }
+  .plan > .btn {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  .plan .btn :global(svg) {
+    width: 18px;
+  }
+
+  .up {
+    margin-top: 20px;
+    padding: clamp(24px, 3vw, 36px);
+    border-radius: var(--r-lg);
+    background: #fff;
+    color: var(--c-ink);
+    box-shadow: inset 0 0 0 2px var(--c-blue);
+  }
+  .up__head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 18px 22px;
+    align-items: center;
+  }
+  .up__head .plan__nome {
+    margin: 8px 0 6px;
+  }
+  .up__plus {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 10px;
+    background: var(--c-blue);
+    color: #fff;
+    font: 800 32px/1 var(--f-display);
+    transform: skewX(var(--slant));
+  }
+  .up__preco {
+    text-align: right;
+  }
+  .up__itens {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px 28px;
+    margin-top: 22px;
+  }
+  .up__aviso {
+    font-size: 14px;
+    color: var(--c-ink-muted);
+  }
+  @media (max-width: 860px) {
+    .pr__grid {
+      grid-template-columns: 1fr;
+    }
+    .up__head {
+      grid-template-columns: auto 1fr;
+    }
+    .up__preco {
+      grid-column: 1 / -1;
+      text-align: left;
+    }
+  }
+</style>
+
+<script>
+  // Confere a data no navegador: depois do fim da Black, mostra só o preço normal.
+  document.querySelectorAll<HTMLElement>('[data-precos]').forEach((box) => {
+    const fim = new Date(box.dataset.fim!).getTime();
+    const out = box.querySelector<HTMLElement>('[data-countdown]');
+    const dois = (n: number) => String(n).padStart(2, '0');
+    const tick = () => {
+      const resta = fim - Date.now();
+      if (resta <= 0) {
+        box.classList.remove('is-black');
+        return clearInterval(id);
+      }
+      box.classList.add('is-black');
+      const d = Math.floor(resta / 864e5);
+      const h = Math.floor((resta % 864e5) / 36e5);
+      const m = Math.floor((resta % 36e5) / 6e4);
+      const s = Math.floor((resta % 6e4) / 1e3);
+      if (out) out.textContent = `${d}d ${dois(h)}h ${dois(m)}min ${dois(s)}s`;
+    };
+    const id = setInterval(tick, 1000);
+    tick();
+  });
+</script>

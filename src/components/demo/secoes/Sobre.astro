@@ -1,0 +1,17 @@
+---
+import { Image } from 'astro:assets';
+import type { Demo } from '../../../data/demos/tipos';
+const { demo } = Astro.props as { demo: Demo };
+const s = demo.sobre!;
+---
+<section class="d-sec d-sobre" id="sobre">
+  <div class="d-wrap d-sobre__grid d-grid">
+    <div class="d-sobre__txt">
+      {s.eyebrow && <p class="d-eyebrow" data-r>{s.eyebrow}</p>}
+      <h2 class="d-h2" data-r>{s.titulo}</h2>
+      {s.texto.map((t) => <p data-r>{t}</p>)}
+      {s.itens && <ul class="d-check" data-r>{s.itens.map((i) => <li>{i}</li>)}</ul>}
+    </div>
+    {s.foto && <div class="d-sobre__img" data-r data-curtain><Image src={s.foto} alt="" widths={[480, 800, 1200]} sizes="(min-width: 900px) 560px, 92vw" /></div>}
+  </div>
+</section>

@@ -1,0 +1,17 @@
+---
+import type { Demo } from '../../../data/demos/tipos';
+const { demo } = Astro.props as { demo: Demo };
+const p = demo.passos!;
+---
+<section class="d-sec d-sec--alt d-pas" id="metodo">
+  <div class="d-wrap">
+    <div class="d-head">
+      {p.eyebrow && <p class="d-eyebrow" data-r>{p.eyebrow}</p>}
+      <h2 class="d-h2" data-r>{p.titulo}</h2>
+      {p.intro && <p class="d-lead" data-r>{p.intro}</p>}
+    </div>
+    <ol class="d-pas__list d-grid">
+      {p.itens.map((i) => <li class="d-card d-pas__item" data-r><h3 class="d-h3">{i.titulo}</h3><p>{i.texto}</p></li>)}
+    </ol>
+  </div>
+</section>

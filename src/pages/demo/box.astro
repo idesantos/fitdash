@@ -1,0 +1,260 @@
+---
+// Modelo Box: chapas de metal que se encaixam com impacto entre as seções.
+import '@fontsource-variable/archivo/standard.css';
+import { Image } from 'astro:assets';
+import DemoPage from '../../components/demo/DemoPage.astro';
+import demo from '../../data/demos/box';
+const h = demo.hero;
+---
+<DemoPage demo={demo} tema="box">
+  <section class="bx-hero" slot="hero">
+    <div class="bx-bg"><Image src={h.foto!} alt="" widths={[800, 1280, 1600]} sizes="100vw" loading="eager" /></div>
+    <div class="d-wrap bx-in">
+      <p class="bx-tag">{h.eyebrow}</p>
+      <h1 class="d-h1"><span>Forte por dentro</span> <span class="bx-out">e por fora.</span></h1>
+      <div class="bx-row">
+        <p class="d-hero__txt">{h.texto}</p>
+        <div class="d-hero__ctas">
+          <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+          <a class="d-btn d-btn--ghost" href={h.ctaSec!.href}>{h.ctaSec!.label}</a>
+        </div>
+      </div>
+    </div>
+    <div class="bx-fita" aria-hidden="true"><span>FORJA · CROSS TRAINING · FUNCIONAL · FORÇA · FORJA · CROSS TRAINING · FUNCIONAL · FORÇA ·</span></div>
+  </section>
+</DemoPage>
+
+<style is:global>
+  .demo.demo--box {
+    --d-bg: #222222;
+    --d-bg-2: #2a2a2a;
+    --d-surface: #303030;
+    --d-fg: #ffffff;
+    --d-muted: #b8b8b8;
+    --d-line: rgb(255 255 255 / 10%);
+    --d-accent: #ff5a1f;
+    --d-accent-fg: #111111;
+    --d-hdr-bg: rgb(34 34 34 / 92%);
+    --d-hdr-fg: #fff;
+    --d-display: 'Archivo Variable', system-ui, sans-serif;
+    --d-dw: 900;
+    --d-dstretch: 62%;
+    --d-dtt: uppercase;
+    --d-dls: 0;
+    --d-dlh: 0.88;
+    --d-r: 0;
+    --d-btn-r: 0;
+    --d-h1: clamp(64px, min(11vw, 15vh), 190px);
+    --d-h2: clamp(48px, 7vw, 110px);
+    --d-shadow: 0 0 0 1px rgb(0 0 0 / 40%), 0 10px 0 -4px rgb(0 0 0 / 35%);
+    --d-img-filter: grayscale(0.85) contrast(1.15);
+    background-image: radial-gradient(rgb(255 255 255 / 3%) 1px, transparent 1px);
+    background-size: 5px 5px;
+  }
+  .demo--box .d-btn {
+    font-family: var(--d-display);
+    font-stretch: 75%;
+    font-weight: 900;
+    font-size: 19px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .demo--box .d-btn--ghost {
+    background: #fff;
+    color: #111;
+    box-shadow: none;
+  }
+  .demo--box .d-h3 {
+    font-size: clamp(28px, 2.4vw, 38px);
+  }
+  .demo--box .d-mod__item:hover .d-mod__img img,
+  .demo--box .d-eq__item:hover img {
+    filter: none;
+  }
+  .demo--box .d-num strong {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--d-accent);
+    font-size: clamp(56px, 7vw, 110px);
+  }
+  .demo--box .d-pla__item.is-destaque {
+    background: var(--d-accent);
+    color: #111;
+  }
+  .demo--box .d-pla__item.is-destaque li::before {
+    color: #111;
+  }
+  .demo--box .d-pla__item.is-destaque .d-btn {
+    background: #111;
+    color: #fff;
+  }
+  .demo--box .d-cta__box {
+    background: repeating-linear-gradient(-45deg, #111 0 26px, var(--d-accent) 26px 52px);
+    color: #fff;
+  }
+  .demo--box .d-cta__box .d-h2 {
+    padding: 6px 18px;
+    background: #111;
+  }
+  .demo--box .d-cta__box p {
+    padding: 4px 12px;
+    background: #111;
+    opacity: 1;
+  }
+  .demo--box .d-cta__box .d-btn {
+    background: #fff;
+    color: #111;
+  }
+  .demo--box .d-map {
+    filter: grayscale(1) invert(0.85);
+  }
+
+  /* Chapa de metal entre seções */
+  .demo--box .d-div {
+    display: block;
+    position: relative;
+    z-index: 2;
+    height: 0;
+  }
+  .demo--box .d-div i {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -34px;
+    display: block;
+    width: min(1200px, 100% - 2 * var(--d-gutter));
+    height: 68px;
+    margin-inline: auto;
+    background:
+      radial-gradient(circle at 18px 50%, #d7d7d7 4px, #555 5px, transparent 6px),
+      radial-gradient(circle at calc(100% - 18px) 50%, #d7d7d7 4px, #555 5px, transparent 6px),
+      repeating-linear-gradient(100deg, rgb(255 255 255 / 4%) 0 2px, transparent 2px 7px),
+      linear-gradient(180deg, #8a8d93, #5b5e64 45%, #3f4247 55%, #6d7076);
+    box-shadow: 0 14px 24px -10px rgb(0 0 0 / 70%), inset 0 1px 0 rgb(255 255 255 / 35%);
+  }
+  .demo--box .d-div i::after {
+    content: 'FORJA';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: 'Archivo Variable', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1;
+    font-stretch: 62%;
+    letter-spacing: 0.5em;
+    color: rgb(0 0 0 / 35%);
+    text-shadow: 0 1px 0 rgb(255 255 255 / 25%);
+  }
+
+  /* Hero */
+  .bx-hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    padding: calc(var(--d-ribbon-h) + var(--d-hdr-h) + 30px) 0 120px;
+    color: #fff;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .bx-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .bx-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.2) brightness(0.55);
+  }
+  .bx-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgb(255 90 31 / 45%), transparent 60%), linear-gradient(0deg, #222 2%, transparent 50%);
+    mix-blend-mode: normal;
+  }
+  .bx-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    background: var(--d-accent);
+    color: #111;
+    font-weight: 800;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .bx-in .d-h1 {
+    margin-top: 18px;
+  }
+  .bx-in .d-h1 span {
+    display: block;
+  }
+  .bx-out {
+    color: transparent;
+    -webkit-text-stroke: 2px #fff;
+  }
+  .bx-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px 40px;
+    margin-top: 24px;
+  }
+  .bx-row .d-hero__txt,
+  .bx-row .d-hero__ctas {
+    margin: 0;
+  }
+  .bx-fita {
+    position: absolute;
+    left: -5%;
+    right: -5%;
+    bottom: 34px;
+    padding: 12px 0;
+    background: var(--d-accent);
+    color: #111;
+    font-family: 'Archivo Variable', sans-serif;
+    font-weight: 900;
+    font-stretch: 70%;
+    font-size: 22px;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    transform: rotate(-2deg);
+    overflow: hidden;
+  }
+  .bx-fita span {
+    display: inline-block;
+    animation: bx-fita 22s linear infinite;
+  }
+  @keyframes bx-fita {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduced } from '../../scripts/demo/base';
+
+  gsap.from('.bx-in .d-h1 span', { x: -80, opacity: 0, duration: 0.9, ease: 'power4.out', stagger: 0.1, delay: 0.1 });
+
+  // Cada chapa cai e se encaixa com um tranco quando entra na tela.
+  if (!reduced) {
+    document.querySelectorAll<HTMLElement>('.demo--box [data-div] i').forEach((chapa, n) => {
+      gsap.set(chapa, { yPercent: -220, rotation: n % 2 ? 4 : -4, opacity: 0 });
+      ScrollTrigger.create({
+        trigger: chapa.parentElement,
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          gsap.to(chapa, { yPercent: 0, rotation: 0, opacity: 1, duration: 0.7, ease: 'bounce.out' });
+          gsap.fromTo(document.querySelector('.demo--box main'), { x: 0 }, { x: 3, duration: 0.06, yoyo: true, repeat: 3, delay: 0.28, clearProps: 'x' });
+        },
+      });
+    });
+  }
+</script>

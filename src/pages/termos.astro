@@ -1,0 +1,68 @@
+---
+import Base from '../layouts/Base.astro';
+import { clausulas, versaoContrato } from '../data/contrato';
+import { STAGING, url } from '../lib/url';
+---
+<Base title="Contrato" description="Contrato de criação e renovação de site da FitDash." simples>
+  <section class="tm-top">
+    <div class="container">
+      <p class="eyebrow">Contrato</p>
+      <h1 class="h-lg">Tudo o que combinamos, por escrito.</h1>
+      <p class="lead">Este é o contrato que você aceita no formulário. Versão {versaoContrato}.</p>
+    </div>
+  </section>
+  <section class="section paper tm">
+    <div class="container tm__in">
+      {STAGING && <p class="tm__aviso">Minuta em revisão jurídica.</p>}
+      {clausulas.map((c, i) => (
+        <section class="tm__c">
+          <h2>{i + 1}. {c.titulo}</h2>
+          <ol>{c.itens.map((t) => <li>{t}</li>)}</ol>
+        </section>
+      ))}
+      <a class="btn btn--ink" href={url('/comecar/')}><span>Começar meu site</span></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .tm-top {
+    padding: calc(var(--header-h) + clamp(28px, 5vw, 64px)) 0 clamp(36px, 5vw, 64px);
+    background: var(--c-bg);
+  }
+  .tm-top h1 {
+    margin: 14px 0 16px;
+    max-width: 18ch;
+  }
+  .tm {
+    padding-top: clamp(40px, 5vw, 70px);
+  }
+  .tm__in {
+    max-width: 820px;
+  }
+  .tm__aviso {
+    margin-bottom: 28px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: #fff7ed;
+    box-shadow: inset 0 0 0 1.5px #fed7aa;
+    font-weight: 600;
+  }
+  .tm__c {
+    padding: 26px 0;
+    border-bottom: 1px solid var(--c-ink-line);
+  }
+  .tm__c h2 {
+    font-size: clamp(22px, 2vw, 28px);
+  }
+  .tm__c ol {
+    margin-top: 14px;
+    padding-left: 20px;
+    display: grid;
+    gap: 8px;
+    color: var(--c-ink-muted);
+  }
+  .tm__in > .btn {
+    margin-top: 40px;
+  }
+</style>

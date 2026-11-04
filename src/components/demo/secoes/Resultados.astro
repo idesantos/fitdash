@@ -1,0 +1,138 @@
+---
+import { Image } from 'astro:assets';
+import type { Demo } from '../../../data/demos/tipos';
+const { demo } = Astro.props as { demo: Demo };
+const r = demo.resultados!;
+---
+<section class="d-sec d-res" id="resultados">
+  <div class="d-wrap">
+    <div class="d-head">
+      {r.eyebrow && <p class="d-eyebrow" data-r>{r.eyebrow}</p>}
+      <h2 class="d-h2" data-r>{r.titulo}</h2>
+      {r.intro && <p class="d-lead" data-r>{r.intro}</p>}
+    </div>
+    <ul class="d-res__grid d-grid">
+      {r.casos.map((c) => (
+        <li class="d-card d-res__item" data-r>
+          <div class="d-cmp" data-cmp style="--p:50">
+            <Image class="d-cmp__a" src={c.foto} alt="" widths={[400, 700]} sizes="(min-width: 900px) 380px, 92vw" />
+            <div class="d-cmp__b"><Image src={c.foto} alt={`Resultado de ${c.nome}`} widths={[400, 700]} sizes="(min-width: 900px) 380px, 92vw" /></div>
+            <span class="d-cmp__line" aria-hidden="true"><i></i></span>
+            <span class="d-cmp__t d-cmp__t--a">Antes</span><span class="d-cmp__t d-cmp__t--b">Depois</span>
+            <input type="range" min="0" max="100" value="50" aria-label={`Comparar antes e depois de ${c.nome}`} />
+          </div>
+          <div class="d-res__body">
+            <p class="d-res__nome"><strong>{c.nome}</strong> · {c.tempo}</p>
+            <ul>{c.metricas.map((m) => <li>{m}</li>)}</ul>
+          </div>
+        </li>
+      ))}
+    </ul>
+    <p class="d-hor__nota">Fotos ilustrativas. No seu site entram os resultados dos seus alunos, com a autorização deles.</p>
+  </div>
+</section>
+<style is:global>
+  .d-res__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .d-res__item {
+    overflow: hidden;
+  }
+  .d-cmp {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+  .d-cmp img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .d-cmp__a {
+    filter: grayscale(1) brightness(0.92) contrast(0.9);
+  }
+  .d-cmp__b {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 0 0 calc(var(--p) * 1%));
+  }
+  .d-cmp__line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--p) * 1%);
+    width: 3px;
+    margin-left: -1.5px;
+    background: #fff;
+    pointer-events: none;
+  }
+  .d-cmp__line i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border-radius: 50%;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m9 6-6 6 6 6M15 6l6 6-6 6' fill='none' stroke='%23111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 22px no-repeat;
+    box-shadow: 0 6px 16px rgb(0 0 0 / 35%);
+  }
+  .d-cmp__t {
+    position: absolute;
+    top: 12px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: rgb(0 0 0 / 65%);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+  .d-cmp__t--a {
+    left: 12px;
+  }
+  .d-cmp__t--b {
+    right: 12px;
+    background: var(--d-accent);
+    color: var(--d-accent-fg);
+  }
+  .d-cmp input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .d-cmp {
+    cursor: ew-resize;
+  }
+  .d-cmp:has(input:focus-visible) .d-cmp__line i {
+    outline: 3px solid var(--d-accent);
+    outline-offset: 3px;
+  }
+  .d-res__body {
+    padding: 18px 20px 22px;
+  }
+  .d-res__body ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .d-res__body li {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--d-accent) 14%, transparent);
+    font-size: 14px;
+    font-weight: 700;
+  }
+</style>

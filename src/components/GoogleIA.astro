@@ -1,0 +1,205 @@
+---
+// Ilustração de uma busca local com resposta de IA. Academia fictícia e sem marca de terceiros.
+import Icon from './Icon.astro';
+const pergunta = 'academia de natação perto de mim aberta agora';
+---
+<figure class="gia" data-gia data-pergunta={pergunta}>
+  <div class="gia__busca">
+    <Icon name="search" />
+    <span class="gia__q" data-gia-q>{pergunta}</span><span class="gia__caret" aria-hidden="true"></span>
+  </div>
+
+  <div class="gia__resposta" data-gia-r>
+    <p class="gia__ai"><Icon name="sparkle" /> Resposta gerada por IA</p>
+    <p class="gia__texto">A <strong>Raia 8 Natação</strong> fica a 1,2 km e está aberta agora, até as 22h. Tem natação infantil e adulto, piscina aquecida e aula experimental grátis. Os horários de cada turma estão no site.</p>
+    <div class="gia__card">
+      <div class="gia__foto" aria-hidden="true"></div>
+      <div class="gia__info">
+        <p class="gia__nome">Raia 8 Natação</p>
+        <p class="gia__nota"><span class="gia__stars"><Icon name="star" /><Icon name="star" /><Icon name="star" /><Icon name="star" /><Icon name="star" /></span> 4,9 · Natação</p>
+        <p class="gia__aberto"><b>Aberto agora</b> · fecha às 22:00</p>
+      </div>
+    </div>
+    <div class="gia__acoes" aria-hidden="true">
+      <span><Icon name="globe" /> Site</span>
+      <span><Icon name="pin" /> Rota</span>
+      <span><Icon name="whatsapp" /> WhatsApp</span>
+    </div>
+  </div>
+  <figcaption>Ilustração com academia fictícia.</figcaption>
+</figure>
+
+<style>
+  .gia {
+    margin: 0;
+    padding: clamp(18px, 2.4vw, 28px);
+    border-radius: var(--r-lg);
+    background: var(--c-surface);
+    box-shadow:
+      0 0 0 1px var(--c-line),
+      0 40px 90px -40px rgb(36 141 207 / 50%);
+  }
+  .gia__busca {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: #fff;
+    color: #1f2937;
+    font-size: clamp(15px, 1.3vw, 17px);
+  }
+  .gia__busca > :global(svg) {
+    flex: none;
+    width: 20px;
+    color: #6b7280;
+  }
+  .gia__q {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .gia__caret {
+    flex: none;
+    width: 2px;
+    height: 22px;
+    margin-left: -10px;
+    background: var(--c-blue);
+    animation: pisca 1s steps(1) infinite;
+  }
+  @keyframes pisca {
+    50% {
+      opacity: 0;
+    }
+  }
+  .gia__resposta {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+    padding: 20px;
+    border-radius: var(--r-md);
+    background: var(--c-surface-2);
+    transition:
+      opacity 0.6s var(--ease-out),
+      transform 0.6s var(--ease-out);
+  }
+  .js .gia:not(.is-done) .gia__resposta {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .gia__ai {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--c-blue-hi);
+  }
+  .gia__ai :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+  .gia__texto {
+    font-size: 16px;
+    color: rgb(255 255 255 / 86%);
+  }
+  .gia__texto strong {
+    color: #fff;
+  }
+  .gia__card {
+    display: flex;
+    gap: 14px;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 5%);
+  }
+  .gia__foto {
+    flex: none;
+    width: 74px;
+    height: 74px;
+    border-radius: 10px;
+    background:
+      repeating-linear-gradient(90deg, #ff4d4d 0 6px, #fff 6px 12px) 0 40% / 100% 3px no-repeat,
+      repeating-linear-gradient(90deg, #ff4d4d 0 6px, #fff 6px 12px) 0 75% / 100% 3px no-repeat,
+      linear-gradient(#58c6ee, #1d8fd0);
+  }
+  .gia__nome {
+    font-weight: 800;
+    font-size: 17px;
+  }
+  .gia__nota {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--c-muted);
+  }
+  .gia__stars {
+    display: inline-flex;
+    color: #fbbf24;
+  }
+  .gia__stars :global(svg) {
+    width: 14px;
+    height: 14px;
+  }
+  .gia__aberto {
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--c-muted);
+  }
+  .gia__aberto b {
+    color: var(--c-green);
+  }
+  .gia__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .gia__acoes span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px var(--c-line);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .gia__acoes :global(svg) {
+    width: 16px;
+    height: 16px;
+    color: var(--c-blue-hi);
+  }
+  figcaption {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--c-muted);
+    text-align: right;
+  }
+</style>
+
+<script>
+  import { reduced } from '../scripts/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-gia]').forEach((box) => {
+    const q = box.querySelector<HTMLElement>('[data-gia-q]')!;
+    const texto = box.dataset.pergunta!;
+    if (reduced) return box.classList.add('is-done');
+    q.textContent = '';
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      let i = 0;
+      const id = setInterval(() => {
+        q.textContent = texto.slice(0, ++i);
+        if (i >= texto.length) {
+          clearInterval(id);
+          setTimeout(() => box.classList.add('is-done'), 450);
+        }
+      }, 42);
+    }, { threshold: 0.5 });
+    io.observe(box);
+  });
+</script>

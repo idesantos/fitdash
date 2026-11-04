@@ -1,0 +1,97 @@
+---
+import type { Demo } from '../../../data/demos/tipos';
+const { demo } = Astro.props as { demo: Demo };
+const a = demo.agenda!;
+const livre = (d: string, h: string) => a.livres.includes(`${d}|${h}`);
+---
+<section class="d-sec d-sec--alt d-ag" id="agenda">
+  <div class="d-wrap">
+    <div class="d-head">
+      {a.eyebrow && <p class="d-eyebrow" data-r>{a.eyebrow}</p>}
+      <h2 class="d-h2" data-r>{a.titulo}</h2>
+      {a.intro && <p class="d-lead" data-r>{a.intro}</p>}
+    </div>
+    <div class="d-card d-ag__box" data-agenda>
+      <div class="d-ag__grid" style={`--dias:${a.dias.length}`}>
+        <span></span>
+        {a.dias.map((d) => <span class="d-ag__dia">{d}</span>)}
+        {a.horas.map((h) => (
+          <>
+            <span class="d-ag__hora">{h}</span>
+            {a.dias.map((d) =>
+              livre(d, h) ? (
+                <button type="button" class="d-ag__slot is-livre" data-slot data-demo-cta data-msg={`Olá! Quero o horário de ${d.toLowerCase()} às ${h}.`}>Livre</button>
+              ) : (
+                <span class="d-ag__slot" data-slot>Ocupado</span>
+              ),
+            )}
+          </>
+        ))}
+      </div>
+      <p class="d-ag__leg"><i></i> Horário livre: toque para reservar pelo WhatsApp</p>
+    </div>
+  </div>
+</section>
+<style is:global>
+  .d-ag__box {
+    padding: clamp(16px, 2.4vw, 28px);
+    overflow-x: auto;
+  }
+  .d-ag__grid {
+    display: grid;
+    grid-template-columns: 64px repeat(var(--dias), minmax(78px, 1fr));
+    gap: 6px;
+    min-width: 560px;
+  }
+  .d-ag__dia {
+    padding: 6px 0 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--d-muted);
+  }
+  .d-ag__hora {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .d-ag__slot {
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--d-bg-2);
+    color: var(--d-muted);
+    font: 600 13px var(--d-font);
+    opacity: 0.6;
+  }
+  .d-ag__slot.is-livre {
+    background: var(--d-accent);
+    color: var(--d-accent-fg);
+    opacity: 1;
+    cursor: pointer;
+    transition: filter 0.2s;
+  }
+  .d-ag__slot.is-livre:hover {
+    filter: brightness(1.12);
+  }
+  .d-ag__leg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--d-muted);
+  }
+  .d-ag__leg i {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: var(--d-accent);
+  }
+</style>

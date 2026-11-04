@@ -1,0 +1,231 @@
+---
+// Modelo Agenda: a semana se monta na tela e os horários livres viram botão de marcar.
+import '@fontsource-variable/nunito/wght.css';
+import { Image } from 'astro:assets';
+import DemoPage from '../../components/demo/DemoPage.astro';
+import demo from '../../data/demos/agenda';
+const h = demo.hero;
+const a = demo.agenda!;
+const proximos = ['Seg', 'Ter', 'Qua'].map((d) => ({ d, horas: a.horas.slice(0, 6).map((hr) => ({ hr, livre: a.livres.includes(`${d}|${hr}`) })) }));
+---
+<DemoPage demo={demo} tema="agenda">
+  <section class="ag-hero" slot="hero">
+    <div class="d-wrap ag-in">
+      <div class="ag-txt">
+        <div class="ag-quem">
+          <Image src={h.foto!} alt="Bia, personal trainer" widths={[120, 240]} sizes="64px" loading="eager" />
+          <p><strong>Bia Fontes</strong><span>{h.eyebrow}</span></p>
+        </div>
+        <h1 class="d-h1">Tem horário <em>livre</em> essa semana.</h1>
+        <p class="d-hero__txt">{h.texto}</p>
+        <div class="d-hero__ctas">
+          <a class="d-btn" href="#agenda">Ver horários livres</a>
+          <button type="button" class="d-btn d-btn--ghost" data-demo-cta data-msg={demo.whatsMsg}>Falar com a Bia</button>
+        </div>
+        <ul class="d-selos">{h.selos!.map((s) => <li>{s}</li>)}</ul>
+      </div>
+      <div class="ag-card" aria-label="Próximos horários">
+        <p class="ag-card__t">Próximos dias</p>
+        <div class="ag-card__grid">
+          {proximos.map((dia) => (
+            <div class="ag-card__col">
+              <span class="ag-card__dia">{dia.d}</span>
+              {dia.horas.map((x) =>
+                x.livre ? (
+                  <button type="button" class="ag-slot is-livre" data-pop data-demo-cta data-msg={`Oi, Bia! Quero o horário de ${dia.d.toLowerCase()} às ${x.hr}.`}>{x.hr}</button>
+                ) : (
+                  <span class="ag-slot" data-pop>{x.hr}</span>
+                ),
+              )}
+            </div>
+          ))}
+        </div>
+        <p class="ag-card__pe"><i></i> Livre · toque para marcar</p>
+      </div>
+    </div>
+  </section>
+</DemoPage>
+
+<style is:global>
+  .demo.demo--agenda {
+    --d-bg: #ffffff;
+    --d-bg-2: #f3f6ff;
+    --d-surface: #ffffff;
+    --d-fg: #1b1b1f;
+    --d-muted: #5f6270;
+    --d-line: rgb(27 27 31 / 10%);
+    --d-accent: #2f6bff;
+    --d-accent-fg: #ffffff;
+    --d-hdr-bg: rgb(255 255 255 / 90%);
+    --d-hdr-fg: #1b1b1f;
+    --d-hero-fg: #1b1b1f;
+    --d-font: 'Nunito Variable', system-ui, sans-serif;
+    --d-display: 'Nunito Variable', system-ui, sans-serif;
+    --d-dw: 900;
+    --d-dls: -0.035em;
+    --d-dlh: 1;
+    --d-r: 22px;
+    --d-h1: clamp(46px, 6vw, 92px);
+    --d-shadow: 0 1px 2px rgb(27 27 31 / 6%), 0 20px 44px -28px rgb(47 107 255 / 35%);
+  }
+  .demo--agenda .d-btn {
+    font-weight: 800;
+  }
+  .demo--agenda .d-h1 em,
+  .demo--agenda .d-h2 em {
+    font-style: normal;
+    color: var(--d-accent);
+  }
+  .demo--agenda .d-sobre__img {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    max-width: 440px;
+    justify-self: center;
+  }
+  .demo--agenda .d-pla__item.is-destaque {
+    background: var(--d-accent);
+    color: #fff;
+  }
+  .demo--agenda .d-pla__item.is-destaque li::before {
+    color: #fff;
+  }
+  .demo--agenda .d-pla__item.is-destaque .d-btn {
+    background: #fff;
+    color: var(--d-accent);
+  }
+  .demo--agenda .d-pla__item.is-destaque .d-pla__selo {
+    background: #1b1b1f;
+  }
+  .demo--agenda .d-loc__atende {
+    margin-top: 12px;
+    color: var(--d-accent);
+    font-weight: 700;
+  }
+
+  /* Hero */
+  .ag-hero {
+    padding: calc(var(--d-ribbon-h) + var(--d-hdr-h) + clamp(20px, 5vh, 60px)) 0 clamp(40px, 8vh, 90px);
+    background: radial-gradient(50% 60% at 85% 40%, rgb(47 107 255 / 12%), transparent 70%);
+  }
+  .ag-in {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(32px, 5vw, 80px);
+    align-items: center;
+  }
+  .ag-quem {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .ag-quem img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--d-accent);
+  }
+  .ag-quem strong {
+    display: block;
+    font-size: 18px;
+  }
+  .ag-quem span {
+    font-size: 14px;
+    color: var(--d-muted);
+  }
+  .ag-txt .d-h1 {
+    margin-top: 22px;
+  }
+  .ag-txt .d-hero__txt {
+    color: var(--d-muted);
+    opacity: 1;
+  }
+  .ag-card {
+    padding: clamp(18px, 2.4vw, 28px);
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 40px 80px -40px rgb(47 107 255 / 50%), 0 0 0 1px var(--d-line);
+  }
+  .ag-card__t {
+    font-weight: 900;
+    font-size: 20px;
+  }
+  .ag-card__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .ag-card__col {
+    display: grid;
+    gap: 8px;
+  }
+  .ag-card__dia {
+    padding-bottom: 6px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--d-muted);
+  }
+  .ag-slot {
+    display: grid;
+    place-items: center;
+    min-height: 42px;
+    border: 0;
+    border-radius: 12px;
+    background: #f1f2f6;
+    color: #b0b3bf;
+    font: 800 15px var(--d-font);
+    text-decoration: line-through;
+  }
+  .ag-slot.is-livre {
+    background: var(--d-accent);
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 8px 18px -8px rgb(47 107 255 / 70%);
+    transition: filter 0.2s;
+  }
+  .ag-slot.is-livre:hover {
+    filter: brightness(1.12);
+  }
+  .ag-card__pe {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--d-muted);
+  }
+  .ag-card__pe i {
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    background: var(--d-accent);
+  }
+  @media (max-width: 860px) {
+    .ag-in {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduced } from '../../scripts/demo/base';
+
+  if (!reduced) {
+    // Hero: os horários entram um a um, como uma agenda se preenchendo.
+    gsap.from('[data-pop]', { scale: 0.3, opacity: 0, duration: 0.5, ease: 'back.out(2.2)', stagger: { each: 0.035, grid: 'auto', from: 'start' }, delay: 0.4, clearProps: 'transform' });
+    // Agenda completa: o mesmo efeito quando ela entra na tela.
+    const slots = document.querySelectorAll('[data-agenda] [data-slot]');
+    gsap.set(slots, { scale: 0.3, opacity: 0 });
+    ScrollTrigger.create({
+      trigger: '[data-agenda]',
+      start: 'top 75%',
+      once: true,
+      onEnter: () => gsap.to(slots, { scale: 1, opacity: (i, el) => ((el as HTMLElement).classList.contains('is-livre') ? 1 : 0.6), duration: 0.45, ease: 'back.out(2)', stagger: 0.012, clearProps: 'transform' }),
+    });
+  }
+</script>

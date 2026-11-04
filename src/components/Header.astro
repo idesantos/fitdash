@@ -1,0 +1,106 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import logo from '../assets/marca/logo-claro.png';
+import { url } from '../lib/url';
+
+type Props = { simples?: boolean };
+const { simples = false } = Astro.props;
+const naHome = Astro.url.pathname === url('/');
+const links = [
+  { href: '#case', label: 'Antes e depois' },
+  { href: '#modelos', label: 'Modelos' },
+  { href: '#como-funciona', label: 'Como funciona' },
+  { href: '#precos', label: 'Preços' },
+  { href: '#duvidas', label: 'Dúvidas' },
+];
+---
+<header class="hdr" data-header>
+  <div class="container hdr__in">
+    <a href={url('/')} class="hdr__logo" aria-label="FitDash, página inicial">
+      <Image src={logo} alt="FitDash" width={150} height={23} loading="eager" />
+    </a>
+    {!simples && (
+      <nav class="hdr__nav" aria-label="Principal">
+        {links.map((l) => <a href={naHome ? l.href : `${url('/')}${l.href}`}>{l.label}</a>)}
+      </nav>
+    )}
+    {simples ? (
+      <a class="hdr__back" href={url('/')}><Icon name="arrow" /> Voltar para o site</a>
+    ) : (
+      <a class="btn btn--green btn--sm" href={url('/comecar/')} data-track="cta_header"><span>Quero meu site</span></a>
+    )}
+  </div>
+</header>
+
+<style>
+  .hdr {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    height: var(--header-h);
+    transition:
+      transform 0.45s var(--ease-out),
+      background 0.3s,
+      box-shadow 0.3s;
+  }
+  .hdr.is-solid {
+    background: rgb(7 9 14 / 78%);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    box-shadow: 0 1px 0 var(--c-line);
+  }
+  .hdr.is-hidden {
+    transform: translateY(-100%);
+  }
+  .hdr__in {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .hdr__logo img {
+    width: 132px;
+    height: auto;
+  }
+  .hdr__nav {
+    display: flex;
+    gap: 26px;
+    margin-left: auto;
+  }
+  .hdr__nav a {
+    font-size: 15px;
+    font-weight: 600;
+    color: rgb(255 255 255 / 78%);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .hdr__nav a:hover {
+    color: #fff;
+  }
+  .hdr__in > .btn {
+    margin-left: 8px;
+  }
+  .hdr__back {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    color: rgb(255 255 255 / 80%);
+  }
+  .hdr__back :global(svg) {
+    width: 18px;
+    transform: rotate(180deg);
+  }
+  @media (max-width: 960px) {
+    .hdr__nav {
+      display: none;
+    }
+    .hdr__in > .btn {
+      margin-left: auto;
+    }
+  }
+</style>

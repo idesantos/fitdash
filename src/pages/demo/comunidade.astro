@@ -1,0 +1,219 @@
+---
+// Modelo Comunidade: mosaico de fotos da turma em colunas que não param de andar.
+import '@fontsource-variable/archivo/standard.css';
+import { Image } from 'astro:assets';
+import DemoPage from '../../components/demo/DemoPage.astro';
+import demo from '../../data/demos/comunidade';
+const h = demo.hero;
+const fotos = h.fotos!;
+const colunas = [0, 1, 2].map((c) => fotos.filter((_, i) => i % 3 === c));
+---
+<DemoPage demo={demo} tema="comunidade">
+  <section class="co-hero" slot="hero">
+    <div class="d-wrap co-in">
+      <div class="co-txt">
+        <p class="d-eyebrow">{h.eyebrow}</p>
+        <h1 class="d-h1">Ninguém treina <em>sozinho</em> aqui.</h1>
+        <p class="d-hero__txt">{h.texto}</p>
+        <div class="d-hero__ctas">
+          <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+          <a class="d-btn d-btn--ghost" href={h.ctaSec!.href}>{h.ctaSec!.label}</a>
+        </div>
+        <ul class="d-selos">{h.selos!.map((s) => <li>{s}</li>)}</ul>
+      </div>
+      <div class="co-mosaico" aria-hidden="true">
+        {colunas.map((col, c) => (
+          <div class="co-col" data-col={c}>
+            <div class="co-trilho">
+              {[...col, ...col].map((foto, i) => (
+                <div class="co-foto"><Image src={foto} alt="" widths={[300, 500]} sizes="(min-width: 900px) 15vw, 30vw" loading={i < 3 ? 'eager' : 'lazy'} /></div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</DemoPage>
+
+<style is:global>
+  .demo.demo--comunidade {
+    --d-bg: #fafafa;
+    --d-bg-2: #f0efed;
+    --d-surface: #ffffff;
+    --d-fg: #111111;
+    --d-muted: #5e5e5e;
+    --d-line: rgb(0 0 0 / 9%);
+    --d-accent: #e63946;
+    --d-accent-fg: #ffffff;
+    --d-hdr-bg: rgb(250 250 250 / 90%);
+    --d-hdr-fg: #111;
+    --d-hero-fg: #111;
+    --d-display: 'Archivo Variable', system-ui, sans-serif;
+    --d-dw: 800;
+    --d-dstretch: 120%;
+    --d-dls: -0.045em;
+    --d-dlh: 0.95;
+    --d-r: 20px;
+    --d-h1: clamp(46px, 6vw, 96px);
+    --d-mod-cols: 4;
+  }
+  .demo--comunidade .d-h1 em,
+  .demo--comunidade .d-h2 em {
+    font-style: normal;
+    color: var(--d-accent);
+  }
+  .demo--comunidade .d-dep__grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+  .demo--comunidade .d-dep__item:nth-child(3n + 1) {
+    background: var(--d-fg);
+    color: #fff;
+  }
+  .demo--comunidade .d-dep__item:nth-child(3n + 1) .d-dep__who span {
+    color: #bdbdbd;
+  }
+  .demo--comunidade .d-dep__item blockquote {
+    font-size: 19px;
+    font-weight: 600;
+  }
+  .demo--comunidade .d-eq__foto {
+    border-radius: 50%;
+    margin: 18px 18px 0;
+    background: #111;
+  }
+  .demo--comunidade .d-eq__item:nth-child(even) .d-eq__foto {
+    background: var(--d-accent);
+  }
+  .demo--comunidade .d-eq__ini {
+    color: #fff;
+    font-size: 64px;
+  }
+  .demo--comunidade .d-eq__item {
+    text-align: center;
+  }
+  .demo--comunidade .d-pla__item.is-destaque {
+    background: var(--d-accent);
+    color: #fff;
+  }
+  .demo--comunidade .d-pla__item.is-destaque li::before {
+    color: #fff;
+  }
+  .demo--comunidade .d-pla__item.is-destaque .d-btn {
+    background: #111;
+  }
+  .demo--comunidade .d-pla__item.is-destaque .d-pla__selo {
+    background: #111;
+  }
+  .demo--comunidade .d-cta__box {
+    background: var(--d-fg);
+    color: #fff;
+  }
+  .demo--comunidade .d-cta__box .d-btn {
+    background: var(--d-accent);
+    color: #fff;
+  }
+  @media (max-width: 900px) {
+    .demo.demo--comunidade {
+      --d-mod-cols: 2;
+    }
+  }
+  @media (max-width: 600px) {
+    .demo.demo--comunidade {
+      --d-mod-cols: 1;
+    }
+  }
+
+  /* Hero com mosaico */
+  .co-hero {
+    position: relative;
+    overflow: hidden;
+    padding-top: calc(var(--d-ribbon-h) + var(--d-hdr-h));
+  }
+  .co-in {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap: clamp(28px, 4vw, 60px);
+    align-items: center;
+    min-height: calc(100svh - var(--d-ribbon-h) - var(--d-hdr-h));
+  }
+  .co-txt {
+    padding: 40px 0;
+  }
+  .co-txt .d-h1 {
+    margin-top: 16px;
+  }
+  .co-txt .d-hero__txt {
+    color: var(--d-muted);
+    opacity: 1;
+  }
+  .co-mosaico {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    height: calc(100svh - var(--d-ribbon-h) - var(--d-hdr-h));
+    min-height: 520px;
+    overflow: hidden;
+    mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+  }
+  .co-col {
+    overflow: hidden;
+  }
+  .co-trilho {
+    display: grid;
+    gap: 12px;
+    will-change: transform;
+  }
+  .co-foto {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: 16px;
+  }
+  .co-col[data-col='1'] .co-foto {
+    aspect-ratio: 4 / 5;
+  }
+  .co-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @media (max-width: 860px) {
+    .co-in {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+    .co-txt {
+      padding: 30px 0 10px;
+    }
+    .co-mosaico {
+      height: 420px;
+      min-height: 0;
+      margin-bottom: 30px;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, lenis, reduced } from '../../scripts/demo/base';
+
+  // Cada coluna anda num sentido; a rolagem acelera o movimento.
+  if (!reduced) {
+    const cols = [...document.querySelectorAll<HTMLElement>('.co-col')];
+    const pos = cols.map(() => 0);
+    let vel = 0;
+    lenis?.on('scroll', ({ velocity }: { velocity: number }) => (vel = velocity));
+    gsap.ticker.add((_, dt) => {
+      cols.forEach((col, i) => {
+        const trilho = col.firstElementChild as HTMLElement;
+        const metade = trilho.scrollHeight / 2;
+        if (!metade) return;
+        const dir = i === 1 ? 1 : -1;
+        pos[i] += dir * (0.035 * dt + Math.abs(vel) * 0.6) * (i === 2 ? 1.25 : 1);
+        pos[i] = ((pos[i] % metade) - metade) % metade;
+        trilho.style.transform = `translate3d(0, ${pos[i].toFixed(1)}px, 0)`;
+      });
+      vel *= 0.92;
+    });
+  }
+</script>

@@ -1,0 +1,13 @@
+---
+import type { Demo } from '../../../data/demos/tipos';
+const { demo } = Astro.props as { demo: Demo };
+---
+<section class="d-sec d-cta" id="contato">
+  <div class="d-wrap">
+    <div class="d-cta__box" data-r>
+      <h2 class="d-h2">{demo.ctaFinal.titulo}</h2>
+      <p>{demo.ctaFinal.texto}</p>
+      <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+    </div>
+  </div>
+</section>

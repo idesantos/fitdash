@@ -1,0 +1,205 @@
+---
+// Modelo Respira: formas que expandem e contraem no ritmo de uma respiração.
+import '@fontsource-variable/outfit/wght.css';
+import { Image } from 'astro:assets';
+import DemoPage from '../../components/demo/DemoPage.astro';
+import demo from '../../data/demos/respira';
+const h = demo.hero;
+---
+<DemoPage demo={demo} tema="respira">
+  <section class="rs-hero" slot="hero">
+    <div class="d-wrap rs-in">
+      <div class="rs-txt">
+        <p class="d-eyebrow">{h.eyebrow}</p>
+        <h1 class="d-h1">Corpo forte, <em>mente leve.</em></h1>
+        <p class="d-hero__txt">{h.texto}</p>
+        <div class="d-hero__ctas">
+          <button type="button" class="d-btn" data-demo-cta data-msg={demo.whatsMsg}>{demo.cta}</button>
+          <a class="d-btn d-btn--ghost" href={h.ctaSec!.href}>{h.ctaSec!.label}</a>
+        </div>
+      </div>
+      <div class="rs-vis">
+        <span class="rs-onda" aria-hidden="true"></span>
+        <span class="rs-onda rs-onda--2" aria-hidden="true"></span>
+        <div class="rs-blob"><Image src={h.foto!} alt="Studio de pilates com luz natural" widths={[500, 800, 1100]} sizes="(min-width: 900px) 44vw, 86vw" loading="eager" /></div>
+        <p class="rs-guia" aria-hidden="true"><span class="rs-in-txt">inspire</span><span class="rs-ex-txt">expire</span></p>
+      </div>
+    </div>
+  </section>
+</DemoPage>
+
+<style is:global>
+  .demo.demo--respira {
+    --d-bg: #f3f6f1;
+    --d-bg-2: #e6ede4;
+    --d-surface: #fbfcfa;
+    --d-fg: #2f3e35;
+    --d-muted: #63746a;
+    --d-line: rgb(47 62 53 / 12%);
+    --d-accent: #6f9a7e;
+    --d-accent-fg: #ffffff;
+    --d-hdr-bg: rgb(243 246 241 / 88%);
+    --d-hdr-fg: #2f3e35;
+    --d-hero-fg: #2f3e35;
+    --d-font: 'Outfit Variable', system-ui, sans-serif;
+    --d-display: 'Outfit Variable', system-ui, sans-serif;
+    --d-dw: 300;
+    --d-dls: -0.035em;
+    --d-dlh: 1.02;
+    --d-r: 30px;
+    --d-h1: clamp(48px, 6.4vw, 100px);
+    --d-h2: clamp(36px, 4.6vw, 68px);
+    --d-mod-cols: 4;
+    --d-shadow: 0 24px 50px -36px rgb(47 62 53 / 35%);
+  }
+  .demo--respira .d-h1 em,
+  .demo--respira .d-h2 em {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--d-accent);
+  }
+  .demo--respira .d-btn {
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .demo--respira .d-eyebrow {
+    font-weight: 500;
+    letter-spacing: 0.22em;
+  }
+  .demo--respira .d-h3 {
+    font-weight: 500;
+  }
+  .demo--respira .d-mod__img {
+    aspect-ratio: 3 / 4;
+    border-radius: 999px 999px var(--d-r) var(--d-r);
+    margin: 10px 10px 0;
+  }
+  .demo--respira .d-pas__item::before {
+    content: '';
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #c9dfcf, var(--d-accent));
+    animation: rs-resp 8s ease-in-out infinite;
+  }
+  .demo--respira .d-eq__ini {
+    font-weight: 300;
+  }
+  .demo--respira .d-cta__box {
+    background: radial-gradient(70% 120% at 50% 100%, #8fb59b, #5e8a6e);
+  }
+  .demo--respira .d-cta__box .d-btn {
+    background: #fff;
+    color: #2f3e35;
+  }
+  @media (max-width: 900px) {
+    .demo.demo--respira {
+      --d-mod-cols: 2;
+    }
+  }
+
+  /* Hero */
+  .rs-hero {
+    padding: calc(var(--d-ribbon-h) + var(--d-hdr-h) + clamp(20px, 5vh, 60px)) 0 clamp(40px, 8vh, 90px);
+    overflow: hidden;
+  }
+  .rs-in {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 5vw, 80px);
+    align-items: center;
+  }
+  .rs-txt .d-h1 {
+    margin-top: 20px;
+  }
+  .rs-txt .d-hero__txt {
+    color: var(--d-muted);
+    opacity: 1;
+  }
+  .rs-vis {
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+  .rs-blob {
+    position: relative;
+    z-index: 1;
+    width: 88%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 47% 53% 50% 50% / 52% 48% 52% 48%;
+    animation: rs-resp 8s ease-in-out infinite, rs-forma 16s ease-in-out infinite;
+  }
+  .rs-blob img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .rs-onda {
+    position: absolute;
+    inset: 4%;
+    border-radius: 50%;
+    border: 1px solid var(--d-accent);
+    opacity: 0;
+    animation: rs-onda 8s ease-out infinite;
+  }
+  .rs-onda--2 {
+    animation-delay: 4s;
+  }
+  @keyframes rs-resp {
+    0%, 100% { transform: scale(0.9); }
+    50% { transform: scale(1); }
+  }
+  @keyframes rs-forma {
+    0%, 100% { border-radius: 47% 53% 50% 50% / 52% 48% 52% 48%; }
+    50% { border-radius: 53% 47% 46% 54% / 46% 54% 48% 52%; }
+  }
+  @keyframes rs-onda {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    100% { transform: scale(1.18); opacity: 0; }
+  }
+  .rs-guia {
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    z-index: 2;
+    display: grid;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: var(--d-surface);
+    box-shadow: var(--d-shadow);
+    font-size: 15px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--d-accent);
+    transform: translateX(-50%);
+  }
+  .rs-guia span {
+    grid-area: 1 / 1;
+    text-align: center;
+    animation: rs-txt 8s ease-in-out infinite;
+  }
+  .rs-guia .rs-ex-txt {
+    animation-delay: -4s;
+  }
+  @keyframes rs-txt {
+    0%, 45% { opacity: 1; }
+    50%, 95% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @media (max-width: 860px) {
+    .rs-in {
+      grid-template-columns: 1fr;
+    }
+    .rs-vis {
+      max-width: 420px;
+      margin-inline: auto;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, reduced } from '../../scripts/demo/base';
+  // Tudo entra devagar, como uma expiração.
+  if (!reduced) gsap.from('.rs-txt > *', { y: 24, opacity: 0, duration: 1.8, ease: 'sine.out', stagger: 0.18, delay: 0.1 });
+</script>

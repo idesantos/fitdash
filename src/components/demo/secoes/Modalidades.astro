@@ -1,0 +1,27 @@
+---
+import { Image } from 'astro:assets';
+import type { Demo } from '../../../data/demos/tipos';
+const { demo } = Astro.props as { demo: Demo };
+const m = demo.modalidades!;
+---
+<section class="d-sec d-sec--alt d-mod" id="modalidades">
+  <div class="d-wrap">
+    <div class="d-head">
+      {m.eyebrow && <p class="d-eyebrow" data-r>{m.eyebrow}</p>}
+      <h2 class="d-h2" data-r>{m.titulo}</h2>
+      {m.intro && <p class="d-lead" data-r>{m.intro}</p>}
+    </div>
+    <ul class="d-mod__grid d-grid">
+      {m.itens.map((i) => (
+        <li class="d-card d-mod__item" data-r>
+          {i.foto && <div class="d-mod__img"><Image src={i.foto} alt="" widths={[400, 700]} sizes="(min-width: 900px) 380px, 92vw" /></div>}
+          <div class="d-mod__body">
+            {i.tag && <span class="d-mod__tag">{i.tag}</span>}
+            <h3 class="d-h3">{i.nome}</h3>
+            <p>{i.texto}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
