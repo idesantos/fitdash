@@ -6,7 +6,7 @@ export const marca = {
   // Preencher quando definido: aparece no rodapé e no contrato.
   razaoSocial: 'Simbium LTDA',
   cnpj: '57.803.299/0001-30',
-  endereco: '', // endereço da sede, para o contrato
+  endereco: 'Rua Alfredo Pujol, 545, sala 43, Santana, São Paulo/SP, CEP 02017-010', // sede, para o contrato
   whatsapp: '', // só números, com DDI: 5511999999999
   email: '',
   foro: 'São Paulo/SP',
