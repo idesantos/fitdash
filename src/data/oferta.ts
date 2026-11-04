@@ -4,8 +4,8 @@ export const marca = {
   nome: 'FitDash',
   descricao: 'Sites para academias, studios e personais.',
   // Preencher quando definido: aparece no rodapé e no contrato.
-  razaoSocial: '',
-  cnpj: '',
+  razaoSocial: 'Simbium LTDA',
+  cnpj: '57.803.299/0001-30',
   whatsapp: '', // só números, com DDI: 5511999999999
   email: '',
   foro: 'São Paulo/SP',
