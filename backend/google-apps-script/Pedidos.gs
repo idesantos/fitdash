@@ -7,8 +7,9 @@
  *  3. cadastra o cliente no Asaas (sem cobrança nenhuma);
  *  4. avisa você por e-mail e manda ao cliente a confirmação com a via do contrato.
  *
+ * Chave do Asaas: propriedade do script ASAAS_API_KEY ou o arquivo Chave.gs gerado por publicar.sh.
+ *  $aact_hmlg_... usa o ambiente de testes; $aact_prod_..., produção.
  * Propriedades do script (Configurações do projeto > Propriedades do script):
- *  ASAAS_API_KEY  chave da API do Asaas. $aact_hmlg_... usa o ambiente de testes; $aact_prod_..., produção.
  *  EMAIL_AVISO    (opcional) quem recebe o aviso de pedido novo. Sem ela, vai para o dono do script.
  *
  * Instalação: veja LEIA-ME.md nesta pasta.
@@ -163,7 +164,10 @@ function registrar_(id, p, pasta, pdf, asaas, salvos) {
 
 // ---------- Asaas ----------
 function chaveAsaas_() {
-  return PropertiesService.getScriptProperties().getProperty('ASAAS_API_KEY') || '';
+  // Propriedade do script, ou a constante CHAVE_ASAAS do arquivo Chave.gs (gerado por publicar.sh a partir do Chaveiro do Mac).
+  const prop = PropertiesService.getScriptProperties().getProperty('ASAAS_API_KEY');
+  if (prop) return prop;
+  return typeof CHAVE_ASAAS !== 'undefined' ? CHAVE_ASAAS : '';
 }
 
 function ambienteAsaas_() {

@@ -7,7 +7,21 @@ O formulário do site (`/comecar/`) envia cada pedido para este script, que roda
 - cadastra o cliente no Asaas, sem criar cobrança;
 - manda o aviso para você e a confirmação, com a via do contrato, para o cliente.
 
-## Instalar (uma vez, uns 5 minutos)
+## Instalar pelo terminal (recomendado)
+
+Faça uma vez só, num terminal normal (no VS Code: Terminal > Novo Terminal):
+
+1. Ligue a **API do Google Apps Script** em https://script.google.com/home/usersettings
+2. Entre na sua conta Google pelo clasp, a ferramenta oficial do Google:
+   `npx -y @google/clasp@2.4.2 login`
+3. Guarde a chave do Asaas no Chaveiro do Mac. O terminal pede a chave duas vezes e não mostra o que você cola:
+   `security add-generic-password -U -a fitdash -s fitdash-asaas -w`
+
+Depois, `./publicar.sh` cria (ou atualiza) o script na sua conta, publica como app da Web e liga o endereço no site.
+Na primeira vez, abra o endereço `/exec` que ele mostrar e autorize o acesso ao Drive, à planilha e ao e-mail.
+A chave vai do Chaveiro para o arquivo `Chave.gs`, que fica fora do git e só existe no seu projeto do Apps Script.
+
+## Instalar pelo navegador (alternativa, uns 5 minutos)
 
 1. Entre em https://script.google.com com a conta que vai receber os pedidos e clique em **Novo projeto**. Dê o nome **FitDash Pedidos**.
 2. Apague o que estiver em `Código.gs` e cole todo o conteúdo de [`Pedidos.gs`](Pedidos.gs). Salve.
