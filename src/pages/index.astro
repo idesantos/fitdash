@@ -9,7 +9,7 @@ import antesDesktop from '../assets/case/antes-desktop.png';
 import depoisDesktop from '../assets/case/depois-desktop.png';
 import antesCelular from '../assets/case/antes-celular.png';
 import depoisCelular from '../assets/case/depois-celular.png';
-import { passos, incluso, ajustes, faq, upsell, prazoDias, parcelasMax, rodadasAjuste, black, blackAtiva } from '../data/oferta';
+import { passos, incluso, ajustes, faq, upsell, prazoDias, parcelasMax, rodadasAjuste, horasAjuste, diasUteisAjuste, black, blackAtiva } from '../data/oferta';
 import { url } from '../lib/url';
 
 const caso = {
@@ -47,7 +47,7 @@ const ativa = blackAtiva();
       <ul class="hero__trust" data-reveal>
         <li><Icon name="shield" /> Nada a pagar agora</li>
         <li><Icon name="clock" /> Entrega em até {prazoDias} dias</li>
-        <li><Icon name="check" /> Pix, boleto ou até {parcelasMax}x</li>
+        <li><Icon name="check" /> Pagamento único, em até {parcelasMax}x</li>
       </ul>
     </div>
     <div class="container hero__visual" data-hero-visual>
@@ -103,7 +103,7 @@ const ativa = blackAtiva();
           ))}
         </ol>
       </div>
-      <p class="steps__after" data-reveal><Icon name="edit" /> Depois do pagamento, o site vai para o seu domínio e você tem {rodadasAjuste} rodadas de ajustes.</p>
+      <p class="steps__after" data-reveal><Icon name="edit" /> A partir da prévia, você tem {horasAjuste} horas para pedir cada uma das {rodadasAjuste} rodadas de ajustes. Depois do pagamento, o site vai para o seu domínio.</p>
     </div>
   </section>
 
@@ -155,7 +155,7 @@ const ativa = blackAtiva();
       <div class="adj grid-safe" data-reveal>
         <div class="adj__col">
           <h3 class="h-md">Suas {rodadasAjuste} rodadas de ajustes</h3>
-          <p class="adj__sub">Cada rodada é uma lista única, feita em até 3 dias úteis.</p>
+          <p class="adj__sub">Depois de cada versão, você tem {horasAjuste} horas para mandar a lista. A gente aplica em até {diasUteisAjuste} dias úteis.</p>
           <ul>{ajustes.entra.map((a) => <li><Icon name="check" /> {a}</li>)}</ul>
         </div>
         <div class="adj__col adj__col--fora">
@@ -174,7 +174,7 @@ const ativa = blackAtiva();
       <ul class="guar__list grid-safe">
         <li data-reveal><Icon name="lock" /><strong>Sem cartão no cadastro</strong><span>Você só preenche e aceita o contrato.</span></li>
         <li data-reveal><Icon name="clock" /><strong>Prazo em contrato</strong><span>Até {prazoDias} dias depois do material completo.</span></li>
-        <li data-reveal><Icon name="shield" /><strong>Pagamento depois da entrega</strong><span>Pix, boleto ou até {parcelasMax}x no cartão.</span></li>
+        <li data-reveal><Icon name="shield" /><strong>Pagamento único, depois da entrega</strong><span>Sem mensalidade. Pix, boleto ou até {parcelasMax}x no cartão.</span></li>
       </ul>
     </div>
   </section>

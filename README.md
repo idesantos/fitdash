@@ -20,7 +20,8 @@ npm run preview
 | Razão social, CNPJ, WhatsApp e e-mail da FitDash | `marca` em `src/data/oferta.ts` |
 | Categorias e os 15 modelos (nome, ideia, efeito, link da demo) | `src/data/modelos.ts` |
 | Campos do formulário por categoria | `src/data/formulario.ts` |
-| Contrato (minuta) | `src/data/contrato.ts` |
+| Contrato (minuta): cláusulas; os campos `{{...}}` são preenchidos com o pedido | `src/data/contrato.ts` |
+| Como o contrato aparece (página /termos/, formulário e via em PDF) | `src/components/ContratoDoc.astro` |
 | Prints do antes e depois | `src/assets/case/` |
 
 Quando a demo de um modelo ficar pronta, preencha `demo` no modelo: o card troca "Demo em produção" por "Ver ao vivo".

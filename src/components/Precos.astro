@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { servicos, upsell, black, blackAtiva, brl, parcelasMax } from '../data/oferta';
+import { servicos, upsell, black, blackAtiva, brl, parcelasMax, pagamentoUnico } from '../data/oferta';
 import { url } from '../lib/url';
 const ativa = blackAtiva();
 ---
@@ -22,7 +22,8 @@ const ativa = blackAtiva();
             <span data-black-only>{brl(s.precoBlack)}</span>
             <span data-normal-only>{brl(s.preco)}</span>
           </p>
-          <p class="plan__parc">no Pix, ou em até {parcelasMax}x no cartão</p>
+          <p class="plan__parc">à vista no Pix ou em até {parcelasMax}x no cartão</p>
+          <p class="plan__unico"><Icon name="check" /> {pagamentoUnico}</p>
         </div>
         <p class="plan__depois"><Icon name="shield" /> Você só paga depois de ver o site pronto.</p>
         <ul class="plan__itens">
@@ -47,6 +48,7 @@ const ativa = blackAtiva();
           <span data-black-only>+{brl(upsell.precoBlack)}</span>
           <span data-normal-only>+{brl(upsell.preco)}</span>
         </p>
+        <p class="plan__parc">pagamento único, junto com o site</p>
       </div>
     </div>
     <ul class="up__itens">
@@ -136,6 +138,30 @@ const ativa = blackAtiva();
     margin-top: 6px;
     font-size: 15px;
     color: var(--c-ink-muted);
+  }
+  .plan__unico {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--c-paper-2);
+    color: var(--c-ink);
+    font-size: 13.5px;
+    font-weight: 700;
+  }
+  .plan--dark .plan__unico {
+    background: rgb(255 255 255 / 10%);
+    color: #fff;
+  }
+  .plan__unico :global(svg) {
+    width: 15px;
+    height: 15px;
+    color: var(--c-blue);
+  }
+  .plan--dark .plan__unico :global(svg) {
+    color: var(--c-green);
   }
   .plan__depois {
     display: flex;

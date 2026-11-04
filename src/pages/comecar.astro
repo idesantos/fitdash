@@ -4,8 +4,9 @@ import Icon from '../components/Icon.astro';
 import ModeloThumb from '../components/ModeloThumb.astro';
 import { categorias, modelos, modelosDa } from '../data/modelos';
 import { conteudoPorCategoria, mudancasRenovacao, guiaFotos, dicasFotos } from '../data/formulario';
-import { servicos, upsell, black, blackAtiva, brl, prazoDias, parcelasMax, rodadasAjuste } from '../data/oferta';
-import { clausulas, versaoContrato } from '../data/contrato';
+import ContratoDoc from '../components/ContratoDoc.astro';
+import { servicos, upsell, black, blackAtiva, brl, prazoDias, parcelasMax, rodadasAjuste, diasMaterial, horasPagamento, horasAjuste, pagamentoUnico } from '../data/oferta';
+import { versaoContrato } from '../data/contrato';
 
 const etapas = ['Serviço e modelo', 'Sua academia', 'Conteúdo', 'Logo e fotos', 'Turbinar', 'Contrato'];
 const ativa = blackAtiva();
@@ -205,7 +206,7 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
             <label class="pill"><input type="radio" name="fotos_quando" value="agora" checked /><span>Envio agora</span></label>
             <label class="pill"><input type="radio" name="fotos_quando" value="depois" /><span>Envio depois</span></label>
           </div>
-          <p class="wz__note" data-fotos-depois hidden>Sem problema. O prazo de {prazoDias} dias começa a contar quando as fotos chegarem.</p>
+          <p class="wz__note" data-fotos-depois hidden>Sem problema. Você tem até {diasMaterial} dias para enviar. O prazo de {prazoDias} dias de entrega começa quando elas chegarem.</p>
 
           <div class="photos grid-safe" data-fotos-agora>
             <label class="f drop drop--big">
@@ -255,26 +256,23 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
 
           <ul class="terms">
             <li><Icon name="shield" /> Nada é cobrado agora.</li>
-            <li><Icon name="clock" /> Entrega em até {prazoDias} dias depois do material completo.</li>
-            <li><Icon name="check" /> Na entrega, você recebe o link do site pronto e a cobrança, que vence no dia seguinte: Pix, boleto ou até {parcelasMax}x no cartão.</li>
-            <li><Icon name="edit" /> Depois do pagamento: site no seu domínio e {rodadasAjuste} rodadas de ajustes.</li>
+            <li><Icon name="clock" /> Você tem até {diasMaterial} dias para completar o material. A entrega é em até {prazoDias} dias depois disso.</li>
+            <li><Icon name="check" /> Na entrega, você recebe o link do site pronto e a cobrança: pagamento único, que vence em {horasPagamento} horas. Pix, boleto ou até {parcelasMax}x no cartão.</li>
+            <li><Icon name="edit" /> A partir da prévia, você tem {horasAjuste} horas para mandar cada uma das {rodadasAjuste} rodadas de ajustes.</li>
+            <li><Icon name="globe" /> Depois do pagamento, o site vai para o seu domínio.</li>
           </ul>
 
-          <details class="contract">
-            <summary>Ler o contrato completo</summary>
-            <div class="contract__body">
-              {clausulas.map((c, i) => (
-                <section>
-                  <h3>{i + 1}. {c.titulo}</h3>
-                  <ol>{c.itens.map((t) => <li>{t}</li>)}</ol>
-                </section>
-              ))}
+          <div class="contract">
+            <div class="contract__bar">
+              <strong>Seu contrato, já com os seus dados</strong>
+              <button type="button" class="contract__pdf" data-via><Icon name="upload" /> Baixar via em PDF</button>
             </div>
-          </details>
+            <div class="contract__scroll"><ContratoDoc id="contrato-pedido" /></div>
+          </div>
 
           <label class="pill pill--check pill--block accept"><input type="checkbox" name="aceite" value={versaoContrato} required /><span>Li e aceito o contrato.</span></label>
           <label class="f f--full"><span>Assinatura: digite seu nome completo <b>*</b></span><input name="assinatura" required minlength="5" autocomplete="name" /></label>
-          <p class="wz__note">O aceite fica registrado com data, hora e IP, e você recebe uma cópia do contrato.</p>
+          <p class="wz__note">O aceite fica registrado com data, hora e IP. Você baixa a sua via aqui e recebe uma cópia por e-mail.</p>
         </fieldset>
 
         <div class="wz__nav">
@@ -295,7 +293,7 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
           </dl>
           <div class="sum__hoje"><span>Hoje você paga</span><strong>R$ 0</strong></div>
           <div class="sum__total"><span>Na entrega</span><strong data-sum-total>—</strong></div>
-          <p class="sum__parc">à vista no Pix, ou em até {parcelasMax}x no cartão</p>
+          <p class="sum__parc"><b>{pagamentoUnico}</b>. À vista no Pix ou em até {parcelasMax}x no cartão.</p>
         </div>
       </aside>
     </div>
@@ -306,6 +304,10 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
       <span class="done__ic"><Icon name="check" /></span>
       <h2 class="h-lg">Pedido recebido!</h2>
       <p class="lead">O prazo de até {prazoDias} dias começa quando o material estiver completo. Você vai receber a confirmação e a cópia do contrato no WhatsApp e no e-mail.</p>
+      <div class="done__via">
+        <p><strong>Sua via do contrato</strong> Guarde uma cópia agora: no navegador, escolha "Salvar como PDF".</p>
+        <button type="button" class="btn btn--ink" data-via><span><Icon name="upload" /> Baixar minha via</span></button>
+      </div>
       <div class="done__test" data-done-test hidden>
         <p><strong>Modo de teste:</strong> o envio ainda não está ligado, então nada saiu daqui. É isto que a gente receberia:</p>
         <pre data-done-json></pre>
@@ -318,6 +320,7 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
 
 <script>
   import { reduced } from '../scripts/motion';
+  import { imprimirVia } from '../scripts/via';
 
   const form = document.querySelector<HTMLFormElement>('[data-wizard]')!;
   const D = JSON.parse(document.querySelector('[data-wz-json]')!.textContent!);
@@ -492,7 +495,7 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
     ];
     if (marcado('servico') === 'renovacao') linhas.push(['Site atual', val('site_atual')]);
     linhas.push(['Google e IA', form.querySelector('[name="google_ia"]:checked') ? 'Sim' : 'Não']);
-    linhas.push(['Total na entrega', `${brl(total())} (à vista ou até ${D.parcelasMax}x)`]);
+    linhas.push(['Total na entrega', `${brl(total())} · pagamento único (à vista ou até ${D.parcelasMax}x)`]);
     const box = form.querySelector<HTMLElement>('[data-review]')!;
     box.replaceChildren(
       ...linhas.map(([k, v]) => {
@@ -506,6 +509,76 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
       }),
     );
   };
+
+  // ---------- Contrato preenchido com o pedido ----------
+  const doc = document.getElementById('contrato-pedido')!;
+  const unidades = ['zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
+  const dezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+  const centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
+  const ate999 = (n: number) => {
+    if (n === 100) return 'cem';
+    const partes: string[] = [];
+    if (n >= 100) partes.push(centenas[Math.floor(n / 100)]);
+    const r = n % 100;
+    if (r) partes.push(r < 20 ? unidades[r] : dezenas[Math.floor(r / 10)] + (r % 10 ? ` e ${unidades[r % 10]}` : ''));
+    return partes.join(' e ');
+  };
+  const reaisPorExtenso = (n: number) => {
+    const mil = Math.floor(n / 1000);
+    const r = n % 1000;
+    let t = mil ? (mil === 1 ? 'mil' : `${ate999(mil)} mil`) : '';
+    if (r) t += (t ? (r < 100 || r % 100 === 0 ? ' e ' : ' ') : '') + ate999(r);
+    return `${t || 'zero'} ${n === 1 ? 'real' : 'reais'}`;
+  };
+  const dataExtenso = (d: Date) => d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Sao_Paulo' });
+  const campo = (c: string, valor: string) => {
+    if (!valor) return;
+    doc.querySelectorAll<HTMLElement>(`[data-c="${c}"]`).forEach((el) => {
+      el.textContent = valor;
+      el.classList.add('is-ok');
+    });
+  };
+  const preencherContrato = (aceite?: Date) => {
+    const docNum = val('documento');
+    const cnpj = digitos(docNum).length === 14;
+    const endereco = val('rua')
+      ? `${val('rua')}, ${val('numero')}${val('complemento') ? ` (${val('complemento')})` : ''}, ${val('bairro')}, ${val('cidade')}/${val('uf')}, CEP ${val('cep')}`
+      : 'endereço não informado';
+    const contato = `e-mail ${val('email')} e WhatsApp ${val('whatsapp')}`;
+    campo(
+      'contratante',
+      cnpj
+        ? `${val('academia')}, inscrita no CNPJ sob o nº ${docNum}, com endereço em ${endereco}, neste ato representada por ${val('responsavel')}, ${contato}`
+        : `${val('responsavel')}, inscrito(a) no CPF sob o nº ${docNum}, responsável por ${val('academia')}, com endereço em ${endereco}, ${contato}`,
+    );
+    const s = D.servicos[marcado('servico')];
+    const m = D.modelos[marcado('modelo')];
+    campo('servico', s ? s.nome.toLowerCase() : '');
+    campo('modelo', m ? `${m.nome} (${D.categorias[m.categoria]})` : '');
+    campo('adicional', form.querySelector('[name="google_ia"]:checked') ? `com o serviço adicional ${D.upsell.nome}` : 'sem serviços adicionais');
+    const t = total();
+    campo('valor', `R$ ${t.toLocaleString('pt-BR')},00 (${reaisPorExtenso(t)})`);
+    const quando = aceite ?? new Date();
+    campo('localData', `${val('cidade') || 'Brasil'}, ${dataExtenso(quando)}.`);
+    campo('assinante', val('assinatura') || val('responsavel'));
+    campo('documento', `${cnpj ? 'CNPJ' : 'CPF'} ${docNum}`);
+    if (aceite) {
+      const hora = aceite.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+      campo('aceite', `${hora} (horário de Brasília) · contrato ${D.versaoContrato} · aceito por ${val('assinatura')} · IP registrado pelo servidor no envio`);
+    } else {
+      const el = doc.querySelector<HTMLElement>('[data-c="aceite"]')!;
+      el.textContent = 'será registrado quando você clicar em "Assinar e enviar pedido"';
+      el.classList.remove('is-ok');
+    }
+  };
+  form.querySelector('[name="assinatura"]')!.addEventListener('input', () => preencherContrato());
+  document.querySelectorAll('[data-via]').forEach((b) =>
+    b.addEventListener('click', () => {
+      preencherContrato(aceitoEm ?? undefined);
+      imprimirVia(doc, `Contrato FitDash - ${val('academia') || 'pedido'}`);
+    }),
+  );
+  let aceitoEm: Date | null = null;
 
   // ---------- Etapas ----------
   const mostrar = (i: number) => {
@@ -521,7 +594,10 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
     btnNext.hidden = i === passos.length - 1;
     btnSubmit.hidden = i !== passos.length - 1;
     erro.hidden = true;
-    if (i === passos.length - 1) montarRevisao();
+    if (i === passos.length - 1) {
+      montarRevisao();
+      preencherContrato();
+    }
     const topo = form.getBoundingClientRect().top + scrollY - 90;
     const lenis = (window as any).__lenis;
     if (scrollY > topo) lenis ? lenis.scrollTo(topo, { duration: reduced ? 0 : 0.8 }) : scrollTo({ top: topo });
@@ -622,7 +698,10 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
     }
     pedido.total = total();
     pedido.black = blackAtiva();
-    pedido.contrato = { versao: D.versaoContrato, aceitoEm: new Date().toISOString(), navegador: navigator.userAgent };
+    aceitoEm = new Date();
+    preencherContrato(aceitoEm);
+    const via = doc.outerHTML;
+    pedido.contrato = { versao: D.versaoContrato, aceitoEm: aceitoEm.toISOString(), navegador: navigator.userAgent, via };
 
     const endpoint = form.dataset.endpoint;
     btnSubmit.disabled = true;
@@ -633,7 +712,8 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
         if (!r.ok) throw new Error(String(r.status));
       } else {
         document.querySelector<HTMLElement>('[data-done-test]')!.hidden = false;
-        document.querySelector<HTMLElement>('[data-done-json]')!.textContent = JSON.stringify(pedido, null, 2);
+        const resumo = { ...pedido, contrato: { ...(pedido.contrato as object), via: `(contrato preenchido em HTML, ${via.length} caracteres)` } };
+        document.querySelector<HTMLElement>('[data-done-json]')!.textContent = JSON.stringify(resumo, null, 2);
       }
       (window as any).dataLayer?.push({ event: 'pedido_enviado', servico: pedido.servico, modelo: pedido.modelo, valor: pedido.total });
       localStorage.removeItem(RASCUNHO);
@@ -1195,31 +1275,68 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
   }
   .contract {
     margin-bottom: 18px;
-    border-radius: 12px;
+    border-radius: 14px;
+    background: var(--c-paper);
     box-shadow: inset 0 0 0 1.5px var(--c-ink-line);
+    overflow: hidden;
   }
-  .contract summary {
-    padding: 14px 16px;
-    font-weight: 700;
+  .contract__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--c-ink-line);
+    font-size: 15px;
+  }
+  .contract__pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--c-ink);
+    color: #fff;
+    font: 700 13px var(--f-body);
     cursor: pointer;
   }
-  .contract__body {
-    max-height: 360px;
+  .contract__pdf :global(svg),
+  .done__via :global(svg) {
+    width: 15px;
+    height: 15px;
+    transform: rotate(180deg);
+  }
+  .contract__scroll {
+    max-height: 440px;
     overflow: auto;
-    padding: 0 18px 18px;
-    font-size: 14px;
-    color: var(--c-ink-muted);
+    padding: 14px;
     overscroll-behavior: contain;
   }
-  .contract__body h3 {
-    margin: 16px 0 6px;
-    font: 700 15px var(--f-body);
-    color: var(--c-ink);
+  .contract__scroll :global(.cdoc) {
+    font-size: 14px;
+    padding: 28px 26px;
   }
-  .contract__body ol {
-    padding-left: 18px;
-    display: grid;
-    gap: 4px;
+  .done__via {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px 24px;
+    margin-top: 28px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: inset 0 0 0 1.5px var(--c-ink-line);
+  }
+  .done__via p {
+    max-width: 46ch;
+    color: var(--c-ink-muted);
+  }
+  .done__via strong {
+    display: block;
+    color: var(--c-ink);
   }
   .accept {
     margin-bottom: 14px;
@@ -1310,6 +1427,10 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
     margin-top: 6px;
     font-size: 13px;
     color: var(--c-muted);
+  }
+  .sum__parc b {
+    color: var(--c-green);
+    font-weight: 700;
   }
 
   /* Concluído */

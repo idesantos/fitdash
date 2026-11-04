@@ -6,6 +6,7 @@ export const marca = {
   // Preencher quando definido: aparece no rodapé e no contrato.
   razaoSocial: 'Simbium LTDA',
   cnpj: '57.803.299/0001-30',
+  endereco: '', // endereço da sede, para o contrato
   whatsapp: '', // só números, com DDI: 5511999999999
   email: '',
   foro: 'São Paulo/SP',
@@ -17,11 +18,17 @@ export const black = {
   fim: '2026-11-30T23:59:59-03:00',
 };
 
-export const prazoDias = 10;
+export const prazoDias = 10; // entrega, contada do material completo
+export const diasMaterial = 7; // para o cliente completar o material, contados do aceite
+export const horasPagamento = 24; // vencimento da cobrança, contado da entrega
+export const horasAjuste = 48; // para mandar a lista de cada rodada, contadas da prévia
+export const diasUteisAjuste = 3; // para a FitDash aplicar cada rodada
 export const parcelasMax = 10;
 export const rodadasAjuste = 2;
-export const diasParaAjustes = 30;
 export const mesesHospedagem = 12;
+
+/** O que se cobra é um valor só, uma vez. Repetido nos preços, no formulário e no contrato. */
+export const pagamentoUnico = 'Pagamento único, sem mensalidade';
 
 export type Servico = {
   id: 'renovacao' | 'criacao';
@@ -112,18 +119,20 @@ export const ajustes = {
 
 export const passos = [
   { titulo: 'Escolha o modelo', texto: '5 categorias, 3 modelos em cada. Veja ao vivo antes de decidir.' },
-  { titulo: 'Conte sobre a academia', texto: 'Um formulário de uns 15 minutos: dados, horários, logo e fotos. Já tem site? Manda o link.' },
+  { titulo: 'Conte sobre a academia', texto: `Um formulário de uns 15 minutos: dados, horários, logo e fotos. Já tem site? Manda o link. O que faltar, você completa em até ${diasMaterial} dias.` },
   { titulo: 'Assine sem pagar nada', texto: 'Contrato digital, aceito no próprio formulário. Sem cartão, sem boleto.' },
-  { titulo: 'Receba e só então pague', texto: `Em até ${prazoDias} dias você recebe o link do site pronto e tem 24h para pagar: Pix, boleto ou até ${parcelasMax}x.` },
+  { titulo: 'Receba e só então pague', texto: `Em até ${prazoDias} dias você recebe o link do site pronto e tem ${horasPagamento}h para pagar. Pagamento único: Pix, boleto ou até ${parcelasMax}x.` },
 ];
 
 export const faq = [
-  { p: 'Preciso pagar alguma coisa agora?', r: `Não. Você escolhe, preenche e aceita o contrato. A cobrança só é emitida quando o site estiver pronto, e vence no dia seguinte à entrega.` },
-  { p: 'E se eu não gostar do resultado?', r: `Você vê o site pronto antes de pagar. Depois do pagamento ainda tem ${rodadasAjuste} rodadas de ajustes para deixar do seu jeito: textos, fotos, cores, horários e seções.` },
-  { p: 'Em quanto tempo fica pronto?', r: `Em até ${prazoDias} dias a partir do momento em que recebemos todo o material: dados, logo e fotos. Material incompleto pausa o prazo.` },
-  { p: 'Como posso pagar?', r: `Pix, boleto ou cartão em até ${parcelasMax}x. No parcelado, os juros do cartão são por conta de quem compra. A cobrança vem pelo Asaas.` },
+  { p: 'Preciso pagar alguma coisa agora?', r: `Não. Você escolhe, preenche e aceita o contrato. A cobrança só é emitida na entrega do site pronto e vence em ${horasPagamento} horas.` },
+  { p: 'É mensalidade ou assinatura?', r: `Não. É pagamento único: você paga uma vez, na entrega, à vista ou parcelado em até ${parcelasMax}x no cartão. A hospedagem dos primeiros ${mesesHospedagem} meses já está inclusa nesse valor.` },
+  { p: 'E se eu não gostar do resultado?', r: `Você vê o site pronto antes de pagar. A partir da prévia, você tem ${horasAjuste} horas para mandar a lista de ajustes, e são ${rodadasAjuste} rodadas: textos, fotos, cores, horários e seções.` },
+  { p: 'Em quanto tempo fica pronto?', r: `Em até ${prazoDias} dias depois que recebemos o material completo: dados, logo e fotos. Na renovação, a gente usa o conteúdo do seu site atual e o prazo começa no pedido.` },
+  { p: 'E se eu demorar para mandar o material?', r: `Você tem até ${diasMaterial} dias, contados do pedido, para completar o material. Se não completar, o pedido é cancelado sem custo nenhum, e o preço promocional deixa de valer.` },
+  { p: 'Como posso pagar?', r: `Pagamento único, na entrega: Pix, boleto ou cartão em até ${parcelasMax}x. No parcelado, os juros do cartão são por conta de quem compra. A cobrança vem pelo Asaas.` },
   { p: 'Preciso ter domínio?', r: 'Não. Se você ainda não tem, a gente ajuda a registrar no Registro.br, no seu nome (custa cerca de R$ 40 por ano, pago direto a eles).' },
-  { p: 'Quem hospeda o site?', r: `A gente. Os primeiros ${mesesHospedagem} meses estão inclusos. Depois disso você decide se renova.` },
+  { p: 'Quem hospeda o site?', r: `A gente. Os primeiros ${mesesHospedagem} meses estão inclusos no valor. Depois disso, a renovação da hospedagem é opcional.` },
   { p: 'Vou perder meu e-mail da academia?', r: 'Não. Na troca do site a gente mantém o seu e-mail funcionando como está.' },
   { p: 'Meu site é WordPress, Wix ou de agência. Dá para renovar?', r: 'Dá. A gente puxa o conteúdo do site atual, monta o novo no modelo escolhido e só troca quando o novo estiver aprovado e pago.' },
   { p: 'Não tenho fotos boas. E agora?', r: 'Fotos de celular servem, se forem na horizontal e com luz natural. O formulário traz um guia do que fotografar. Quanto melhores as fotos, melhor o site.' },
