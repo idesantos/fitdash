@@ -34,6 +34,7 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
   <section class:list={['wz paper', { 'is-black': ativa }]} data-wz>
     <div class="container wz__in grid-safe">
       <form class="wz__form" data-wizard data-endpoint={endpoint} novalidate>
+        <div class="wz__isca" aria-hidden="true"><label>Site da empresa <input name="empresa_site" tabindex="-1" autocomplete="off" /></label></div>
         <ol class="wz__prog" aria-label="Etapas">
           {etapas.map((e, i) => <li data-prog={i}><span>{i + 1}</span><em>{e}</em></li>)}
         </ol>
@@ -223,7 +224,7 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
           </div>
           <div class="previews" data-previews></div>
 
-          <label class="f f--full"><span>Vídeo curto da academia (opcional)</span><input type="file" name="video" accept="video/*" data-file /><small>10 a 20 segundos, na horizontal. Pode virar o fundo da primeira tela.</small></label>
+          <label class="f f--full"><span>Vídeo curto da academia (opcional)</span><input type="file" name="video" accept="video/*" data-file /><small>10 a 20 segundos, na horizontal, até 20 MB. Pode virar o fundo da primeira tela.</small></label>
         </fieldset>
 
         <!-- 5. Turbinar -->
@@ -303,6 +304,7 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
     <div class="container done__in">
       <span class="done__ic"><Icon name="check" /></span>
       <h2 class="h-lg">Pedido recebido!</h2>
+      <p class="done__id">Pedido <strong data-done-id></strong></p>
       <p class="lead">O prazo de até {prazoDias} dias começa quando o material estiver completo. Você vai receber a confirmação e a cópia do contrato no WhatsApp e no e-mail.</p>
       <div class="done__via">
         <p><strong>Sua via do contrato</strong> Guarde uma cópia agora: no navegador, escolha "Salvar como PDF".</p>
@@ -538,7 +540,7 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
       el.classList.add('is-ok');
     });
   };
-  const preencherContrato = (aceite?: Date) => {
+  const preencherContrato = (aceite?: Date, ip = '') => {
     const docNum = val('documento');
     const cnpj = digitos(docNum).length === 14;
     const endereco = val('rua')
@@ -564,7 +566,8 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
     campo('documento', `${cnpj ? 'CNPJ' : 'CPF'} ${docNum}`);
     if (aceite) {
       const hora = aceite.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-      campo('aceite', `${hora} (horário de Brasília) · contrato ${D.versaoContrato} · aceito por ${val('assinatura')} · IP registrado pelo servidor no envio`);
+      campo('aceite', `${hora} (horário de Brasília) · contrato ${D.versaoContrato} · aceito por ${val('assinatura')} · IP ${ip || ipAceite || 'não identificado'}`);
+      if (ip) ipAceite = ip;
     } else {
       const el = doc.querySelector<HTMLElement>('[data-c="aceite"]')!;
       el.textContent = 'será registrado quando você clicar em "Assinar e enviar pedido"';
@@ -579,6 +582,7 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
     }),
   );
   let aceitoEm: Date | null = null;
+  let ipAceite = '';
 
   // ---------- Etapas ----------
   const mostrar = (i: number) => {
@@ -685,31 +689,105 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
   mostrar(0);
 
   // ---------- Envio ----------
+  // ---------- Envio ----------
+  // Fotos são reduzidas no navegador (máx. 2000 px, JPEG) para o envio caber e ser rápido.
+  const paraBase64 = (blob: Blob) =>
+    new Promise<string>((ok, falha) => {
+      const r = new FileReader();
+      r.onload = () => ok(String(r.result).split(',')[1] ?? '');
+      r.onerror = () => falha(r.error);
+      r.readAsDataURL(blob);
+    });
+  const reduzirFoto = async (f: File): Promise<Blob> => {
+    if (!/^image\/(jpeg|png|webp|heic|heif)$/i.test(f.type)) return f;
+    try {
+      const img = await createImageBitmap(f);
+      const escala = Math.min(1, 2000 / Math.max(img.width, img.height));
+      if (escala === 1 && f.size < 900_000) return f;
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(img.width * escala);
+      cv.height = Math.round(img.height * escala);
+      cv.getContext('2d')!.drawImage(img, 0, 0, cv.width, cv.height);
+      return await new Promise<Blob>((ok) => cv.toBlob((b) => ok(b ?? f), 'image/jpeg', 0.85));
+    } catch {
+      return f;
+    }
+  };
+  const lerArquivos = async () => {
+    const lista: { campo: string; nome: string; tipo: string; base64: string }[] = [];
+    for (const input of form.querySelectorAll<HTMLInputElement>('input[type="file"]')) {
+      // :disabled também pega os campos dentro de grupos desligados (outra categoria, "envio depois").
+      if (input.matches(':disabled') || !input.files?.length) continue;
+      for (const f of input.files) {
+        const foto = input.name === 'fotos' || input.name === 'extra_resultados';
+        const blob = foto ? await reduzirFoto(f) : f;
+        const nome = foto && blob !== f ? f.name.replace(/\.\w+$/, '') + '.jpg' : f.name;
+        lista.push({ campo: input.name, nome, tipo: blob.type || f.type, base64: await paraBase64(blob) });
+      }
+    }
+    return lista;
+  };
+  const meuIp = async () => {
+    try {
+      const ctl = new AbortController();
+      const t = setTimeout(() => ctl.abort(), 3000);
+      const r = await fetch('https://api.ipify.org?format=json', { signal: ctl.signal });
+      clearTimeout(t);
+      return ((await r.json()) as { ip: string }).ip;
+    } catch {
+      return '';
+    }
+  };
+  const rotuloEnvio = btnSubmit.querySelector('span')!.innerHTML;
+  const status = (txt: string) => (btnSubmit.querySelector('span')!.textContent = txt);
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!etapaValida(atual)) return;
-    const fd = new FormData(form);
-    const pedido: Record<string, unknown> = {};
-    for (const [k, v] of fd.entries()) {
-      const valor = v instanceof File ? (v.name ? `${v.name} (${Math.round(v.size / 1024)} KB)` : null) : v;
-      if (valor === null) continue;
-      if (k in pedido) pedido[k] = ([] as unknown[]).concat(pedido[k], valor);
-      else pedido[k] = valor;
+    const video = form.querySelector<HTMLInputElement>('[name="video"]')?.files?.[0];
+    if (video && video.size > 20 * 1024 * 1024) {
+      erro.hidden = false;
+      erro.textContent = 'O vídeo passou de 20 MB. Volte à etapa de fotos e escolha um menor, ou mande depois pelo WhatsApp.';
+      return;
     }
-    pedido.total = total();
-    pedido.black = blackAtiva();
-    aceitoEm = new Date();
-    preencherContrato(aceitoEm);
-    const via = doc.outerHTML;
-    pedido.contrato = { versao: D.versaoContrato, aceitoEm: aceitoEm.toISOString(), navegador: navigator.userAgent, via };
-
-    const endpoint = form.dataset.endpoint;
     btnSubmit.disabled = true;
+    erro.hidden = true;
     try {
+      const fd = new FormData(form);
+      const pedido: Record<string, unknown> = {};
+      for (const [k, v] of fd.entries()) {
+        if (v instanceof File) continue;
+        if (k in pedido) pedido[k] = ([] as unknown[]).concat(pedido[k], v);
+        else pedido[k] = v;
+      }
+      const s = D.servicos[marcado('servico')];
+      const m = D.modelos[marcado('modelo')];
+      pedido.servico_nome = s?.nome;
+      pedido.modelo_nome = m?.nome;
+      pedido.categoria_nome = m ? D.categorias[m.categoria] : '';
+      pedido.total = total();
+      pedido.black = blackAtiva();
+
+      status('Registrando o aceite…');
+      const ip = await meuIp();
+      aceitoEm = new Date();
+      preencherContrato(aceitoEm, ip);
+      const via = doc.outerHTML;
+      pedido.contrato = { versao: D.versaoContrato, aceitoEm: aceitoEm.toISOString(), ip, navegador: navigator.userAgent, via };
+
+      const endpoint = form.dataset.endpoint;
       if (endpoint) {
-        fd.append('pedido', JSON.stringify(pedido));
-        const r = await fetch(endpoint, { method: 'POST', body: fd });
-        if (!r.ok) throw new Error(String(r.status));
+        status('Preparando as fotos…');
+        const arquivos = await lerArquivos();
+        const corpo = JSON.stringify({ pedido, arquivos });
+        if (corpo.length > 45 * 1024 * 1024) throw new Error('grande');
+        status(`Enviando (${(corpo.length / 1024 / 1024).toFixed(1)} MB)…`);
+        // text/plain evita a checagem prévia de CORS; o Apps Script lê o corpo como texto.
+        const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: corpo });
+        const resp = (await r.json()) as { ok: boolean; id?: string; erro?: string };
+        if (!resp.ok) throw new Error(resp.erro || 'falha');
+        pedido.id = resp.id;
+        document.querySelector<HTMLElement>('[data-done-id]')!.textContent = resp.id ?? '';
       } else {
         document.querySelector<HTMLElement>('[data-done-test]')!.hidden = false;
         const resumo = { ...pedido, contrato: { ...(pedido.contrato as object), via: `(contrato preenchido em HTML, ${via.length} caracteres)` } };
@@ -721,11 +799,18 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
       document.querySelector<HTMLElement>('.wz-top')!.hidden = true;
       document.querySelector<HTMLElement>('[data-done]')!.hidden = false;
       scrollTo({ top: 0 });
-    } catch {
+    } catch (err) {
       erro.hidden = false;
-      erro.textContent = 'Não conseguimos enviar agora. Confira sua internet e tente de novo.';
+      const msg = err instanceof Error ? err.message : '';
+      erro.textContent =
+        msg === 'grande'
+          ? 'Os arquivos ficaram grandes demais para enviar de uma vez. Tire o vídeo ou algumas fotos e mande o resto pelo WhatsApp depois.'
+          : msg && msg !== 'falha' && !/fetch|network|Failed/i.test(msg)
+            ? msg
+            : 'Não conseguimos enviar agora. Confira sua internet e tente de novo.';
     } finally {
       btnSubmit.disabled = false;
+      btnSubmit.querySelector('span')!.innerHTML = rotuloEnvio;
     }
   });
 </script>
@@ -749,6 +834,21 @@ const ufs = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO R
     grid-template-columns: minmax(0, 1fr) 320px;
     gap: clamp(24px, 4vw, 56px);
     align-items: start;
+  }
+  .wz__isca {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .done__id {
+    margin-top: 8px;
+    font-size: 15px;
+    color: var(--c-ink-muted);
+  }
+  .done__id:has(strong:empty) {
+    display: none;
   }
   .wz__form {
     padding: clamp(20px, 3vw, 40px);

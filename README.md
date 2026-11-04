@@ -45,14 +45,16 @@ As fotos das demos são do Pexels, com licença livre para uso comercial: `src/a
 ## Formulário
 
 `/comecar/` tem 6 etapas, valida CPF/CNPJ e WhatsApp, busca o endereço pelo CEP (ViaCEP) e salva um rascunho no navegador.
+No envio, as fotos são reduzidas no navegador (máx. 2000 px) e o pedido vai em JSON para um Google Apps Script (`backend/google-apps-script/`).
+Esse script guarda tudo no Drive e numa planilha, cadastra o cliente no Asaas e manda os e-mails. A instalação está no LEIA-ME de lá.
 
-O envio ainda não está ligado. Sem `PUBLIC_PEDIDO_ENDPOINT`, a tela final mostra o JSON que seria enviado (modo de teste).
-Para ligar, defina `PUBLIC_PEDIDO_ENDPOINT` com a URL que recebe um `multipart/form-data`: os arquivos mais um campo `pedido` com o JSON. Essa URL deve:
+O endereço do script entra na publicação pela variável do repositório `PEDIDO_ENDPOINT`:
 
-1. guardar os arquivos;
-2. registrar o aceite (versão do contrato, data, hora e IP);
-3. criar o cliente no Asaas, sem cobrança;
-4. confirmar pelo WhatsApp e mandar a cópia do contrato.
+```sh
+gh variable set PEDIDO_ENDPOINT --body "https://script.google.com/macros/s/.../exec"
+```
+
+Sem a variável, o formulário fica em modo de teste: a tela final mostra o JSON que seria enviado.
 
 ## Domínio definitivo
 

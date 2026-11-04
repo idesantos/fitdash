@@ -25,6 +25,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # Endereço do Apps Script que recebe os pedidos (variável do repositório: PEDIDO_ENDPOINT).
+          PUBLIC_PEDIDO_ENDPOINT: ${{ vars.PEDIDO_ENDPOINT }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
