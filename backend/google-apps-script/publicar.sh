@@ -10,7 +10,10 @@ cd "$(dirname "$0")"
 CLASP="npx -y @google/clasp@2.4.2"
 
 # Chave do Asaas: sai do Chaveiro do Mac direto para Chave.gs (fora do git). Nunca é exibida.
-if CHAVE=$(security find-generic-password -a fitdash -s fitdash-asaas -w 2>/dev/null); then
+# Com --sem-chave, o arquivo sai do projeto (use depois de rodar configurar, que guarda a chave nas propriedades).
+if [ "${1:-}" = "--sem-chave" ]; then
+  rm -f Chave.gs && echo "Enviando sem Chave.gs: a chave fica só nas propriedades do script."
+elif CHAVE=$(security find-generic-password -a fitdash -s fitdash-asaas -w 2>/dev/null); then
   printf "// Gerado por publicar.sh a partir do Chaveiro do Mac. Não versionar.\nconst CHAVE_ASAAS = '%s';\n" "$CHAVE" > Chave.gs
   case "$CHAVE" in
     '$aact_prod_'*) echo "Chave do Asaas: produção" ;;
@@ -25,7 +28,7 @@ fi
 # Projeto: cria na primeira vez, depois só atualiza.
 if [ ! -f .clasp.json ]; then
   cp appsscript.json /tmp/fitdash-appsscript.json
-  $CLASP create --type webapp --title "FitDash Pedidos" --rootDir . >/dev/null
+  $CLASP create --type webapp --title "FitDash Pedidos" --rootDir . | grep -vi "^$" | sed -E "s/[A-Za-z0-9_-]{40,}/…/g"
   cp /tmp/fitdash-appsscript.json appsscript.json
 fi
 $CLASP push --force >/dev/null

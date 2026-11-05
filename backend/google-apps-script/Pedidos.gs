@@ -26,6 +26,12 @@ const COLUNAS = [
 
 /** Rode uma vez pelo editor para autorizar o acesso ao Drive, à planilha e ao e-mail. */
 function configurar() {
+  // Se a chave veio no arquivo Chave.gs, ela passa para as propriedades do script.
+  // Depois disso o publicar.sh --sem-chave tira o arquivo, e a chave some do código.
+  if (typeof CHAVE_ASAAS !== 'undefined' && CHAVE_ASAAS) {
+    PropertiesService.getScriptProperties().setProperty('ASAAS_API_KEY', CHAVE_ASAAS);
+    Logger.log('Chave do Asaas guardada nas propriedades do script.');
+  }
   const pasta = pastaRaiz_();
   const planilha = planilha_();
   Logger.log('Pasta: ' + pasta.getUrl());
