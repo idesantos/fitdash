@@ -26,12 +26,7 @@ const COLUNAS = [
 
 /** Rode uma vez pelo editor para autorizar o acesso ao Drive, à planilha e ao e-mail. */
 function configurar() {
-  // Se a chave veio no arquivo Chave.gs, ela passa para as propriedades do script.
-  // Depois disso o publicar.sh --sem-chave tira o arquivo, e a chave some do código.
-  if (typeof CHAVE_ASAAS !== 'undefined' && CHAVE_ASAAS) {
-    PropertiesService.getScriptProperties().setProperty('ASAAS_API_KEY', CHAVE_ASAAS);
-    Logger.log('Chave do Asaas guardada nas propriedades do script.');
-  }
+  if (migrarChave_()) Logger.log('Chave do Asaas guardada nas propriedades do script.');
   const pasta = pastaRaiz_();
   const planilha = planilha_();
   Logger.log('Pasta: ' + pasta.getUrl());
@@ -40,7 +35,19 @@ function configurar() {
 }
 
 function doGet() {
-  return json_({ ok: true, servico: 'FitDash · pedidos' });
+  migrarChave_();
+  return json_({ ok: true, servico: 'FitDash · pedidos', asaas: chaveAsaas_() ? ambienteAsaas_().nome : 'sem chave' });
+}
+
+/**
+ * Se a chave veio no arquivo Chave.gs (publicar.sh), ela passa para as propriedades do script.
+ * Depois o publicar.sh --sem-chave tira o arquivo, e a chave some do código.
+ */
+function migrarChave_() {
+  if (typeof CHAVE_ASAAS === 'undefined' || !CHAVE_ASAAS) return false;
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty('ASAAS_API_KEY') !== CHAVE_ASAAS) props.setProperty('ASAAS_API_KEY', CHAVE_ASAAS);
+  return true;
 }
 
 function doPost(e) {
@@ -170,10 +177,9 @@ function registrar_(id, p, pasta, pdf, asaas, salvos) {
 
 // ---------- Asaas ----------
 function chaveAsaas_() {
-  // Propriedade do script, ou a constante CHAVE_ASAAS do arquivo Chave.gs (gerado por publicar.sh a partir do Chaveiro do Mac).
-  const prop = PropertiesService.getScriptProperties().getProperty('ASAAS_API_KEY');
-  if (prop) return prop;
-  return typeof CHAVE_ASAAS !== 'undefined' ? CHAVE_ASAAS : '';
+  // A chave do Chave.gs (recém-enviada) vale mais que a guardada; sem o arquivo, vale a das propriedades.
+  if (typeof CHAVE_ASAAS !== 'undefined' && CHAVE_ASAAS) return CHAVE_ASAAS;
+  return PropertiesService.getScriptProperties().getProperty('ASAAS_API_KEY') || '';
 }
 
 function ambienteAsaas_() {
