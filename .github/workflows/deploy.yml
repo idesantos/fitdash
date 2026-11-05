@@ -28,6 +28,10 @@ jobs:
         env:
           # Endereço do Apps Script que recebe os pedidos (variável do repositório: PEDIDO_ENDPOINT).
           PUBLIC_PEDIDO_ENDPOINT: ${{ vars.PEDIDO_ENDPOINT }}
+          # Domínio do site. Com STAGING diferente de "false", as páginas ficam fora do Google (noindex).
+          SITE_URL: https://sites.fitdash.com.br
+          BASE_PATH: /
+          STAGING: ${{ vars.STAGING || 'true' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
